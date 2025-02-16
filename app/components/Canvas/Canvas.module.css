@@ -1,0 +1,352 @@
+.canvas {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #f0f0f0;
+  cursor: default;
+  touch-action: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas:global(.panning) {
+  cursor: grab;
+}
+
+.canvas:global(.panning.active) {
+  cursor: grabbing;
+}
+
+.transformLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.selectionBox {
+  position: fixed;
+  border: 2px solid #2196f3;
+  background-color: rgba(33, 150, 243, 0.1);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Node common styles */
+.node {
+  position: absolute;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+.node.selected {
+  box-shadow: 0 0 0 2px #2196f3, 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.node.dragging {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  opacity: 0.8;
+}
+
+/* Resize handles */
+.resizeHandle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border: 1px solid #2196f3;
+  border-radius: 50%;
+}
+
+.resizeHandle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+.resizeHandle.n  { top: -4px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+.resizeHandle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+.resizeHandle.e  { top: 50%; right: -4px; transform: translateY(-50%); cursor: e-resize; }
+.resizeHandle.se { bottom: -4px; right: -4px; cursor: se-resize; }
+.resizeHandle.s  { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+.resizeHandle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+.resizeHandle.w  { top: 50%; left: -4px; transform: translateY(-50%); cursor: w-resize; }
+
+/* Node type specific styles */
+.iframeNode {
+  min-width: 200px;
+  min-height: 150px;
+}
+
+.iframeNode iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 4px;
+}
+
+.textNode {
+  min-width: 100px;
+  min-height: 50px;
+  padding: 8px;
+}
+
+.imageNode img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.fileNode {
+  min-width: 120px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.fileNode .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.promptNode {
+  min-width: 200px;
+  min-height: 100px;
+  padding: 12px;
+  background: #f8f9fa;
+}
+
+/* Fullscreen mode */
+.fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  transform: none !important;
+  background: white;
+  border-radius: 0;
+}
+
+/* Toolbar styles */
+.toolbar {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.toolGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.toolGroup:last-child {
+  border-bottom: none;
+}
+
+.toolButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.toolButton:hover {
+  background: #e9ecef;
+}
+
+.toolButton:active {
+  background: #dee2e6;
+}
+
+.icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.hint {
+  font-size: 12px;
+  color: #6c757d;
+  line-height: 1.4;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Loading and error states */
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #6c757d;
+  font-size: 14px;
+  background: white;
+  padding: 12px 24px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorMessage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #dc3545;
+  text-align: center;
+  padding: 16px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* File node specific styles */
+.fileInfo {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.fileDetails {
+  width: 100%;
+  text-align: center;
+}
+
+.fileName {
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.fileSize {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.fileActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.previewButton,
+.downloadButton {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.previewButton:hover,
+.downloadButton:hover {
+  background: #e9ecef;
+}
+
+/* Prompt node specific styles */
+.promptEditor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.promptToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.promptTitle {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.promptContent {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.promptFooter {
+  padding: 8px;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: #e9ecef;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.removeTag {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.tagInput {
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 12px;
+  width: 80px;
+}
+
+.lastEdited {
+  font-size: 12px;
+  color: #6c757d;
+}
