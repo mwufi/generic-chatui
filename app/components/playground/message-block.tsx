@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Copy, Image, Code } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Copy, Image, Code, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -18,6 +18,20 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
     const [isJsonView, setIsJsonView] = useState(false);
+    const [elapsedTime, setElapsedTime] = useState(0);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isLoading) {
+            const startTime = Date.now();
+            interval = setInterval(() => {
+                setElapsedTime((Date.now() - startTime) / 1000);
+            }, 100);
+        } else {
+            setElapsedTime(0);
+        }
+        return () => clearInterval(interval);
+    }, [isLoading]);
 
     const handleContentChange = () => {
         if (editedContent !== content) {
@@ -52,14 +66,27 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Role Label */}
-            <div className="text-sm text-muted-foreground mb-2 capitalize">
-                {role}
+            <div className="text-sm text-muted-foreground mb-2 capitalize flex items-center gap-2">
+                <span>{role}</span>
+                {isLoading && (
+                    <span className="text-xs">
+                        {elapsedTime.toFixed(1)}s
+                    </span>
+                )}
             </div>
 
             {/* Content */}
             <div className="rounded-md w-full max-w-full">
                 {isLoading ? (
-                    <div className="animate-pulse">...</div>
+                    <div className="flex items-center gap-3 text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <div className="animate-pulse flex gap-1">
+                            <span className="inline-block w-1 h-1 rounded-full bg-current" />
+                            <span className="inline-block w-1 h-1 rounded-full bg-current" />
+                            <span className="inline-block w-1 h-1 rounded-full bg-current" />
+                        </div>
+                        <span className="text-sm">AI is thinking</span>
+                    </div>
                 ) : isJsonView ? (
                     <div className="text-sm bg-secondary/5 p-2 rounded">
                         <pre className="overflow-x-auto whitespace-pre-wrap break-words max-w-full">

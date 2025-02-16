@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { MessageBlock } from "./message-block";
 import { Message } from "@/app/api/oai/completion/route";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronRight, Save, Code } from "lucide-react";
+import { ChevronDown, ChevronRight, Save, Code, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -173,11 +173,18 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                                 key={index}
                                 role={message.role}
                                 content={message.content[0].text || ""}
-                                isLoading={message.role === "assistant" && isLoading && index === messages.length - 1}
+                                isLoading={false}
                                 onContentChange={(content) => handleMessageChange(index, content)}
                                 onDelete={() => handleDeleteMessage(index)}
                             />
                         ))}
+                        {isLoading && (
+                            <MessageBlock
+                                role="assistant"
+                                content=""
+                                isLoading={true}
+                            />
+                        )}
                     </div>
 
                     {/* Input Bar */}
@@ -194,13 +201,22 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                                 placeholder="Enter user message..."
                                 className="flex-1 bg-transparent outline-none resize-none py-1 min-w-0"
                                 rows={1}
+                                disabled={isLoading}
                             />
                         </div>
                         <Button
                             onClick={handleSend}
-                            className="bg-primary hover:bg-primary/90 shrink-0"
+                            className={cn(
+                                "shrink-0",
+                                isLoading ? "bg-primary/80" : "bg-primary hover:bg-primary/90"
+                            )}
+                            disabled={isLoading}
                         >
-                            Run
+                            {isLoading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                                "Run"
+                            )}
                         </Button>
                     </div>
                 </>
