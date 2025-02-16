@@ -92,7 +92,7 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
                 ) : (
                     <div
                         className={cn(
-                            "text-sm whitespace-pre-wrap outline-none max-w-full break-words",
+                            "whitespace-pre-wrap outline-none max-w-full break-words",
                             isEditing && "ring-1 ring-primary p-2 rounded-lg bg-secondary/10"
                         )}
                         contentEditable={isEditing}

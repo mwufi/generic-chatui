@@ -52,6 +52,20 @@ export default function DevLayout({
                             </li>
                         </ul>
                     </div>
+
+                    <div>
+                        <h2 className="mb-2 text-lg font-semibold">Playground</h2>
+                        <ul className="space-y-1">
+                            <li>
+                                <Link
+                                    href="/dev/playground"
+                                    className="block px-2 py-1 text-sm hover:bg-gray-100 rounded"
+                                >
+                                    Chat
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </nav>
             </aside>
             <main className="flex-1 overflow-auto">
