@@ -61,8 +61,8 @@ export const IFrameNode: React.FC<IFrameNodeProps> = ({
         onDoubleClick={handleDoubleClick}
         style={{ width: '100%', height: '100%', position: 'relative' }}
       >
-        {/* Interaction overlay when not selected */}
-        {!selected && !isFullscreen && (
+        {/* Interaction overlay - always present except in fullscreen */}
+        {!isFullscreen && (
           <div
             style={{
               position: 'absolute',
@@ -72,6 +72,7 @@ export const IFrameNode: React.FC<IFrameNodeProps> = ({
               height: '100%',
               background: 'transparent',
               zIndex: 1,
+              pointerEvents: selected ? 'none' : 'auto', // Allow interaction when selected
             }}
           />
         )}

@@ -1,99 +1,89 @@
-import { Vector2D, BaseNode, SelectionMode } from './types';
-
-interface SelectionBox {
-  start: Vector2D;
-  end: Vector2D;
-}
+import { Vector2D, BaseNode } from './types';
 
 export class SelectionManager {
   private selectedNodes: Set<string>;
-  private selectionMode: SelectionMode;
-  private selectionBox: SelectionBox | null;
+  private selectionBox: { start: Vector2D; end: Vector2D } | null;
   private selectionChangeHandler: (selectedIds: string[]) => void;
 
   constructor(onSelectionChange: (selectedIds: string[]) => void) {
     this.selectedNodes = new Set();
-    this.selectionMode = 'none';
     this.selectionBox = null;
     this.selectionChangeHandler = onSelectionChange;
   }
 
-  startSelection(point: Vector2D, mode: SelectionMode = 'rectangle'): void {
-    this.selectionMode = mode;
-    if (mode === 'rectangle') {
-      this.selectionBox = { start: point, end: point };
-    }
-  }
-
-  updateSelection(point: Vector2D, nodes: BaseNode[]): void {
-    if (this.selectionMode === 'rectangle' && this.selectionBox) {
-      this.selectionBox.end = point;
-      
-      // Calculate selection box bounds in canvas coordinates
-      const minX = Math.min(this.selectionBox.start.x, this.selectionBox.end.x);
-      const maxX = Math.max(this.selectionBox.start.x, this.selectionBox.end.x);
-      const minY = Math.min(this.selectionBox.start.y, this.selectionBox.end.y);
-      const maxY = Math.max(this.selectionBox.start.y, this.selectionBox.end.y);
-
-      // Clear previous selection
-      this.selectedNodes.clear();
-
-      // Check which nodes intersect with selection box
-      nodes.forEach(node => {
-        const nodeRight = node.position.x + node.dimensions.width;
-        const nodeBottom = node.position.y + node.dimensions.height;
-
-        if (
-          node.position.x <= maxX &&
-          nodeRight >= minX &&
-          node.position.y <= maxY &&
-          nodeBottom >= minY
-        ) {
-          this.selectedNodes.add(node.id);
-        }
-      });
-
-      this.notifySelectionChange();
-    }
-  }
-
-  endSelection(): void {
-    this.selectionBox = null;
-    this.selectionMode = 'none';
-  }
-
-  toggleNodeSelection(nodeId: string, additive: boolean = false): void {
-    console.log('Selection toggle:', {
-      nodeId,
-      additive,
-      previousSelection: Array.from(this.selectedNodes)
-    });
-
-    if (!additive) {
-      console.log('Clearing selection (non-additive mode)');
-      this.selectedNodes.clear();
-    }
-
-    if (this.selectedNodes.has(nodeId)) {
-      console.log(`Removing node ${nodeId} from selection`);
-      this.selectedNodes.delete(nodeId);
-    } else {
-      console.log(`Adding node ${nodeId} to selection`);
-      this.selectedNodes.add(nodeId);
-    }
-
-    const newSelection = Array.from(this.selectedNodes);
-    console.log('New selection state:', newSelection);
+  // Replace current selection with single node
+  select(nodeId: string): void {
+    console.log('Selecting single node:', nodeId);
+    this.selectedNodes.clear();
+    this.selectedNodes.add(nodeId);
     this.notifySelectionChange();
   }
 
+  // Add/remove from current selection
+  toggleSelection(nodeId: string): void {
+    console.log('Toggling node selection:', nodeId);
+    if (this.selectedNodes.has(nodeId)) {
+      this.selectedNodes.delete(nodeId);
+    } else {
+      this.selectedNodes.add(nodeId);
+    }
+    this.notifySelectionChange();
+  }
+
+  // Clear all selection
   clearSelection(): void {
+    console.log('Clearing selection');
     if (this.selectedNodes.size > 0) {
       this.selectedNodes.clear();
       this.notifySelectionChange();
     }
   }
 
+  // Start rectangle selection
+  beginRectangleSelection(point: Vector2D): void {
+    console.log('Beginning rectangle selection at:', point);
+    this.selectionBox = { start: point, end: point };
+  }
+
+  // Update rectangle selection
+  updateRectangleSelection(point: Vector2D, nodes: BaseNode[]): void {
+    if (!this.selectionBox) return;
+
+    console.log('Updating rectangle selection to:', point);
+    this.selectionBox.end = point;
+
+    // Calculate selection box bounds
+    const minX = Math.min(this.selectionBox.start.x, this.selectionBox.end.x);
+    const maxX = Math.max(this.selectionBox.start.x, this.selectionBox.end.x);
+    const minY = Math.min(this.selectionBox.start.y, this.selectionBox.end.y);
+    const maxY = Math.max(this.selectionBox.start.y, this.selectionBox.end.y);
+
+    // Clear and recompute selection based on intersection
+    this.selectedNodes.clear();
+    nodes.forEach(node => {
+      const nodeRight = node.position.x + node.dimensions.width;
+      const nodeBottom = node.position.y + node.dimensions.height;
+
+      if (
+        node.position.x <= maxX &&
+        nodeRight >= minX &&
+        node.position.y <= maxY &&
+        nodeBottom >= minY
+      ) {
+        this.selectedNodes.add(node.id);
+      }
+    });
+
+    this.notifySelectionChange();
+  }
+
+  // End rectangle selection
+  endRectangleSelection(): void {
+    console.log('Ending rectangle selection');
+    this.selectionBox = null;
+  }
+
+  // Query methods
   isSelected(nodeId: string): boolean {
     return this.selectedNodes.has(nodeId);
   }
@@ -102,7 +92,7 @@ export class SelectionManager {
     return Array.from(this.selectedNodes);
   }
 
-  getSelectionBox(): SelectionBox | null {
+  getSelectionBox(): { start: Vector2D; end: Vector2D } | null {
     return this.selectionBox;
   }
 

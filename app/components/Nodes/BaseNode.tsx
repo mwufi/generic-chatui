@@ -63,9 +63,14 @@ export const BaseNodeWrapper: React.FC<BaseNodeProps> = ({
       }
     });
     
-    if (!selected) {
-      console.log(`Selecting node ${node.id}`);
-      onSelect(e);
+    // Always call onSelect to handle selection changes
+    console.log(`Selecting node ${node.id}`);
+    onSelect(e);
+
+    // If already dragging, drop the node
+    if (isDragging) {
+      setIsDragging(false);
+      return;
     }
 
     setIsDragging(true);

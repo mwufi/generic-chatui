@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ViewportManager } from '@/app/utils/viewport';
 import { SelectionManager } from '@/app/utils/selection';
+import { InteractionManager } from '@/app/utils/interaction';
 import { BaseNode, Vector2D, ViewportState } from '@/app/utils/types';
 import { nodeRegistry } from '@/app/utils/nodeRegistry';
 import { Toolbar } from './Toolbar';
@@ -17,13 +18,13 @@ export const Canvas: React.FC<CanvasProps> = ({ nodes, onNodesChange }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<ViewportManager | null>(null);
   const selectionRef = useRef<SelectionManager | null>(null);
+  const interactionRef = useRef<InteractionManager | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const [spacePressed, setSpacePressed] = useState(false);
   const lastMousePos = useRef<Vector2D | null>(null);
 
-  // Initialize viewport and selection managers
+  // Initialize managers
   useEffect(() => {
     if (!containerRef.current || viewportRef.current) return;
 
@@ -60,13 +61,18 @@ export const Canvas: React.FC<CanvasProps> = ({ nodes, onNodesChange }) => {
           selectedIds,
           currentNodes: nodes.map(n => ({ id: n.id, type: n.type }))
         });
-        // We no longer update the nodes array with selection state
-        // Selection state is managed by SelectionManager
+      }
+    );
+
+    interactionRef.current = new InteractionManager(
+      () => {
+        // Force re-render when interaction state changes
+        setIsInitialized(prev => prev);
       }
     );
 
     setIsInitialized(true);
-  }, [onNodesChange, nodes]);
+  }, [nodes]);
 
   // Update viewport dimensions on resize
   useEffect(() => {
@@ -116,26 +122,31 @@ export const Canvas: React.FC<CanvasProps> = ({ nodes, onNodesChange }) => {
 
   // Mouse event handlers
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!viewportRef.current || !selectionRef.current) return;
+    if (!viewportRef.current || !selectionRef.current || !interactionRef.current) return;
 
     const point = { x: e.clientX, y: e.clientY };
+    const canvasPoint = viewportRef.current.screenToCanvas(point);
     lastMousePos.current = point;
 
     if (spacePressed) {
       setIsPanning(true);
     } else {
-      setIsDragging(true);
-      selectionRef.current.startSelection(
-        viewportRef.current.screenToCanvas(point),
-        e.shiftKey ? 'direct' : 'rectangle'
-      );
+      // Clear selection when clicking empty canvas
+      if (e.target === e.currentTarget) {
+        selectionRef.current.clearSelection();
+        if (e.button === 0) { // Left click
+          interactionRef.current.startInteraction(canvasPoint, 'rectangleSelect');
+          selectionRef.current.beginRectangleSelection(canvasPoint);
+        }
+      }
     }
   }, [spacePressed]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!viewportRef.current || !lastMousePos.current) return;
+    if (!viewportRef.current || !lastMousePos.current || !interactionRef.current) return;
 
     const point = { x: e.clientX, y: e.clientY };
+    const canvasPoint = viewportRef.current.screenToCanvas(point);
     const delta = {
       x: point.x - lastMousePos.current.x,
       y: point.y - lastMousePos.current.y
@@ -143,22 +154,37 @@ export const Canvas: React.FC<CanvasProps> = ({ nodes, onNodesChange }) => {
 
     if (isPanning) {
       viewportRef.current.updatePan(delta);
-    } else if (isDragging && selectionRef.current) {
-      selectionRef.current.updateSelection(
-        viewportRef.current.screenToCanvas(point),
-        nodes
-      );
+    } else {
+      const state = interactionRef.current.getState();
+      if (state.mode === 'rectangleSelect' && selectionRef.current) {
+        selectionRef.current.updateRectangleSelection(canvasPoint, nodes);
+      } else if (state.mode === 'drag' && state.targetNodeId) {
+        // Handle node dragging
+        const node = nodes.find(n => n.id === state.targetNodeId);
+        if (node && onNodesChange) {
+          const updatedNodes = nodes.map(n =>
+            n.id === state.targetNodeId
+              ? { ...n, position: canvasPoint }
+              : n
+          );
+          onNodesChange(updatedNodes);
+        }
+      }
     }
 
     lastMousePos.current = point;
-  }, [nodes, isPanning, isDragging]);
+  }, [nodes, isPanning, onNodesChange]);
 
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    setIsPanning(false);
-    if (selectionRef.current) {
-      selectionRef.current.endSelection();
+    if (!interactionRef.current || !selectionRef.current) return;
+
+    const state = interactionRef.current.getState();
+    if (state.mode === 'rectangleSelect') {
+      selectionRef.current.endRectangleSelection();
     }
+
+    interactionRef.current.endInteraction();
+    setIsPanning(false);
     lastMousePos.current = null;
   }, []);
 
@@ -248,7 +274,26 @@ export const Canvas: React.FC<CanvasProps> = ({ nodes, onNodesChange }) => {
               key={node.id}
               node={node}
               selected={selectionRef.current!.isSelected(node.id)}
-              onSelect={(e: React.MouseEvent) => selectionRef.current!.toggleNodeSelection(node.id, e.shiftKey)}
+              onSelect={(e: React.MouseEvent) => {
+                if (!selectionRef.current || !interactionRef.current || !viewportRef.current) return;
+                
+                const isSelected = selectionRef.current.isSelected(node.id);
+                
+                // Handle selection only if not already selected (unless shift is pressed)
+                if (!isSelected || e.shiftKey) {
+                  if (e.shiftKey) {
+                    selectionRef.current.toggleSelection(node.id);
+                  } else {
+                    selectionRef.current.select(node.id);
+                  }
+                }
+
+                // Always start drag on left click, whether selected or not
+                if (e.button === 0) {
+                  const canvasPoint = viewportRef.current.screenToCanvas({ x: e.clientX, y: e.clientY });
+                  interactionRef.current.startInteraction(canvasPoint, 'drag', node.id);
+                }
+              }}
               onMove={(x: number, y: number) => {
                 console.log('Node move:', {
                   nodeId: node.id,
@@ -269,14 +314,19 @@ export const Canvas: React.FC<CanvasProps> = ({ nodes, onNodesChange }) => {
         })}
       </div>
       {/* Selection overlay */}
-      {isDragging && selectionRef.current.getSelectionBox() && (
+      {interactionRef.current?.getState().mode === 'rectangleSelect' && selectionRef.current?.getSelectionBox() && (
         <div
           className={styles.selectionBox}
           style={{
-            left: Math.min(selectionRef.current.getSelectionBox()!.start.x, selectionRef.current.getSelectionBox()!.end.x),
-            top: Math.min(selectionRef.current.getSelectionBox()!.start.y, selectionRef.current.getSelectionBox()!.end.y),
-            width: Math.abs(selectionRef.current.getSelectionBox()!.end.x - selectionRef.current.getSelectionBox()!.start.x),
-            height: Math.abs(selectionRef.current.getSelectionBox()!.end.y - selectionRef.current.getSelectionBox()!.start.y)
+            position: 'absolute',
+            left: Math.min(selectionRef.current.getSelectionBox()!.start.x, selectionRef.current.getSelectionBox()!.end.x) * viewportState.scale + viewportState.offset.x,
+            top: Math.min(selectionRef.current.getSelectionBox()!.start.y, selectionRef.current.getSelectionBox()!.end.y) * viewportState.scale + viewportState.offset.y,
+            width: Math.abs(selectionRef.current.getSelectionBox()!.end.x - selectionRef.current.getSelectionBox()!.start.x) * viewportState.scale,
+            height: Math.abs(selectionRef.current.getSelectionBox()!.end.y - selectionRef.current.getSelectionBox()!.start.y) * viewportState.scale,
+            border: '2px solid #0066ff',
+            background: 'rgba(0, 102, 255, 0.1)',
+            pointerEvents: 'none',
+            zIndex: 1000
           }}
         />
       )}
