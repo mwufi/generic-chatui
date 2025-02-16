@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, Image, Code, Loader2 } from "lucide-react";
+import { Copy, Image, Code, Loader2, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -59,17 +59,18 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
     return (
         <div
             className={cn(
-                "group relative px-4 py-3 transition-all",
-                isHovered && "bg-secondary/5"
+                "group relative px-6 py-6 transition-all duration-200",
+                isHovered && "bg-secondary/20",
+                role === "assistant" && "bg-secondary/5"
             )}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Role Label */}
-            <div className="text-sm text-muted-foreground mb-2 capitalize flex items-center gap-2">
-                <span>{role}</span>
-                {isLoading && (
-                    <span className="text-xs">
+            <div className="text-sm text-muted-foreground mb-1.5 flex items-center gap-2">
+                <span className="capitalize">{role}</span>
+                {isLoading && elapsedTime > 3.5 && (
+                    <span className="text-xs font-medium">
                         {elapsedTime.toFixed(1)}s
                     </span>
                 )}
@@ -80,15 +81,10 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
                 {isLoading ? (
                     <div className="flex items-center gap-3 text-muted-foreground">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <div className="animate-pulse flex gap-1">
-                            <span className="inline-block w-1 h-1 rounded-full bg-current" />
-                            <span className="inline-block w-1 h-1 rounded-full bg-current" />
-                            <span className="inline-block w-1 h-1 rounded-full bg-current" />
-                        </div>
-                        <span className="text-sm">AI is thinking</span>
+                        <span className="text-sm font-medium">AI is thinking</span>
                     </div>
                 ) : isJsonView ? (
-                    <div className="text-sm bg-secondary/5 p-2 rounded">
+                    <div className="text-sm bg-secondary/20 p-3 rounded-lg">
                         <pre className="overflow-x-auto whitespace-pre-wrap break-words max-w-full">
                             {JSON.stringify(messageJson, null, 2)}
                         </pre>
@@ -96,8 +92,8 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
                 ) : (
                     <div
                         className={cn(
-                            "whitespace-pre-wrap outline-none max-w-full break-words",
-                            isEditing && "ring-1 ring-primary p-2 rounded"
+                            "text-sm whitespace-pre-wrap outline-none max-w-full break-words",
+                            isEditing && "ring-1 ring-primary p-2 rounded-lg bg-secondary/10"
                         )}
                         contentEditable={isEditing}
                         onBlur={handleContentChange}
@@ -111,38 +107,34 @@ export function MessageBlock({ role, content, isLoading, onContentChange, onDele
 
             {/* Action Buttons */}
             <div className={cn(
-                "absolute right-4 top-3 flex items-center gap-1 transition-opacity z-10",
-                !isHovered && "opacity-0"
+                "absolute right-6 top-6 flex items-center gap-1 transition-all duration-200",
+                !isHovered && "opacity-0 translate-x-2"
             )}>
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsEditing(!isEditing)}
-                    className={cn(isEditing && "text-primary")}
+                    className={cn("h-8 w-8", isEditing && "text-primary bg-primary/10")}
                     disabled={isJsonView}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                        <path fillRule="evenodd" d="M16.793 2.793a3.121 3.121 0 1 1 4.414 4.414l-8.5 8.5A1 1 0 0 1 12 16H9a1 1 0 0 1-1-1v-3a1 1 0 0 1 .293-.707l8.5-8.5Zm3 1.414a1.121 1.121 0 0 0-1.586 0L10 12.414V14h1.586l8.207-8.207a1.121 1.121 0 0 0 0-1.586Z" clipRule="evenodd" />
-                    </svg>
+                    <Pencil className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={handleCopy}>
+                <Button variant="ghost" size="icon" onClick={handleCopy} className="h-8 w-8">
                     <Copy className="h-4 w-4" />
                 </Button>
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsJsonView(!isJsonView)}
-                    className={cn(isJsonView && "text-primary")}
+                    className={cn("h-8 w-8", isJsonView && "text-primary bg-primary/10")}
                 >
                     <Code className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={onDelete}>
-                    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" className="h-4 w-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8">
+                    <Trash2 className="h-4 w-4" />
                 </Button>
                 {role === "user" && (
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
                         <Image className="h-4 w-4" />
                     </Button>
                 )}
