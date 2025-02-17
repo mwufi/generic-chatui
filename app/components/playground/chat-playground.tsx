@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useChat, Message } from '@ai-sdk/react'
 import { BumbleMessage } from "../messages/bumble-message";
+import { ThemeableMessage } from "../messages/themeable-message";
 
 interface ModelConfig {
     model: string;
@@ -20,6 +21,7 @@ interface ModelConfig {
     topP: number;
     frequencyPenalty: number;
     presencePenalty: number;
+    theme?: string;
 }
 
 interface Conversation {
@@ -45,7 +47,8 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
         stopSequences: [],
         topP: 1.0,
         frequencyPenalty: 0.0,
-        presencePenalty: 0.0
+        presencePenalty: 0.0,
+        theme: "default"
     });
 
     const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
@@ -88,7 +91,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
         }
     }, [systemMessage, messages]);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSubmit(e);
@@ -115,8 +118,10 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                 id: Date.now().toString(),
                 name: convoName,
                 messages: messages.map(msg => ({
+                    id: msg.id,
                     role: msg.role as "system" | "user" | "assistant",
-                    content: [{ type: "text", text: msg.content }]
+                    content: msg.content,
+                    timestamp: msg.createdAt
                 })),
                 systemMessage,
                 config
@@ -213,16 +218,32 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
 
                     {/* Messages */}
                     <div className="flex-1 overflow-y-auto min-h-0">
-                        {messages.slice(1).map((message, index) => (
-                            <BumbleMessage
-                                key={message.id}
-                                role={message.role as "system" | "user" | "assistant"}
-                                content={message.content}
-                                isLoading={false}
-                                onContentChange={(content) => handleMessageChange(index + 1, content)}
-                                onDelete={() => handleDeleteMessage(index + 1)}
-                            />
-                        ))}
+                        {messages.slice(1).map((message, index, arr) => {
+                            const prevMessage = index > 0 ? arr[index - 1] : null;
+                            const nextMessage = index < arr.length - 1 ? arr[index + 1] : null;
+                            const isFirstInGroup = !prevMessage || prevMessage.role !== message.role;
+                            const isLastInGroup = !nextMessage || nextMessage.role !== message.role;
+                            const layout = config.theme === "slack" ? "linear" : "alternating";
+
+                            // Ensure we only pass valid roles
+                            const role = message.role === "system" || message.role === "user" || message.role === "assistant"
+                                ? message.role
+                                : "assistant";
+
+                            return (
+                                <ThemeableMessage
+                                    key={message.id}
+                                    {...message}
+                                    role={role}
+                                    theme={config.theme}
+                                    isFirstInGroup={isFirstInGroup}
+                                    isLastInGroup={isLastInGroup}
+                                    layout={layout}
+                                    onContentChange={(content: string) => handleMessageChange(index + 1, content)}
+                                    onDelete={() => handleDeleteMessage(index + 1)}
+                                />
+                            );
+                        })}
                     </div>
 
                     {/* Input Bar */}
@@ -258,6 +279,27 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
 
     const sidebar = (
         <div className="p-4 flex flex-col gap-6">
+            <div className="space-y-4">
+                <h3 className="font-medium">Theme</h3>
+                <div className="space-y-2">
+                    <Select
+                        value={config.theme}
+                        onValueChange={(value: string) => setConfig(prev => ({ ...prev, theme: value }))}
+                    >
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="default">Default</SelectItem>
+                            <SelectItem value="imessage">iMessage</SelectItem>
+                            <SelectItem value="slack">Slack</SelectItem>
+                            <SelectItem value="bumble">Bumble</SelectItem>
+                            <SelectItem value="halloween">Halloween</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
             <div className="space-y-4">
                 <h3 className="font-medium">Model Configuration</h3>
                 <div className="space-y-4">
@@ -378,14 +420,17 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
     )
 
     return (
-        <div className="h-full grid" style={{
+        <div className={cn(
+            "h-full grid chat-container",
+            `theme-${config.theme}`,
+        )} style={{
             gridTemplateColumns: isSidebarOpen ? "1fr 320px" : "1fr",
         }}>
             <div className="flex flex-col h-full overflow-hidden">
-                <div className="p-2 shadow">
+                <div className="p-2 shadow chat-toolbar">
                     {toolbar}
                 </div>
-                <div className="overflow-y-auto p-2">
+                <div className="overflow-y-auto p-2 chat-messages">
                     {mainContent}
                 </div>
             </div>

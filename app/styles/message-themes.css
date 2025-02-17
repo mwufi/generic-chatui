@@ -1,0 +1,343 @@
+/* Base Message Styles */
+.message-container {
+    display: flex;
+    gap: var(--message-gap, 0.75rem);
+    padding: var(--message-padding, 1rem);
+    max-width: var(--message-max-width, 70%);
+    font-family: var(--message-font, system-ui);
+    transition: all var(--transition-speed, 200ms) ease-in-out;
+}
+
+.message-user {
+    flex-direction: var(--user-direction, row-reverse);
+    margin-left: auto;
+}
+
+.message-avatar {
+    width: var(--avatar-size, 2.5rem);
+    height: var(--avatar-size, 2.5rem);
+    border-radius: var(--avatar-radius, 50%);
+    background: var(--avatar-bg, #f0f0f0);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.message-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: var(--avatar-text, #666);
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    font-size: var(--header-font-size, 0.75rem);
+}
+
+.message-username {
+    font-weight: 600;
+    color: var(--header-text, #666);
+}
+
+.message-timestamp {
+    color: var(--timestamp-text, #888);
+}
+
+.message-bubble {
+    position: relative;
+    padding: var(--bubble-padding, 0.75rem 1rem);
+    background: var(--bubble-bg, #fff);
+    border: var(--bubble-border, 1px solid transparent);
+    border-radius: var(--bubble-radius, 1rem);
+    color: var(--bubble-text, #000);
+    font-size: var(--message-font-size, 0.875rem);
+    box-shadow: var(--bubble-shadow, none);
+}
+
+.message-user .message-bubble {
+    background: var(--user-bubble-bg, var(--bubble-bg));
+    color: var(--user-bubble-text, var(--bubble-text));
+}
+
+.message-loading {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.5rem;
+}
+
+.loading-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: currentColor;
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: bounce 1s infinite;
+}
+
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.message-footer {
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: var(--footer-justify, flex-start);
+    gap: 0.5rem;
+    font-size: var(--footer-font-size, 0.675rem);
+}
+
+.message-reactions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.message-reaction {
+    padding: 0.25rem 0.5rem;
+    background: var(--reaction-bg, rgba(0, 0, 0, 0.05));
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.message-actions {
+    display: flex;
+    gap: 0.25rem;
+    transition: opacity var(--transition-speed, 200ms);
+}
+
+.message-actions-hidden {
+    opacity: 0;
+}
+
+.message-actions-visible {
+    opacity: 1;
+}
+
+.message-action-button {
+    color: var(--action-text, #666);
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* Layout Styles */
+.layout-alternating .message-container {
+    margin: var(--message-spacing, 0.5rem) 0;
+}
+
+.layout-alternating .message-user {
+    flex-direction: row-reverse;
+    margin-left: auto;
+}
+
+.layout-linear .message-container {
+    margin: 0;
+    padding-top: var(--message-spacing, 0.25rem);
+    padding-bottom: var(--message-spacing, 0.25rem);
+}
+
+.layout-linear .message-consecutive {
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+}
+
+.layout-linear .message-consecutive .message-bubble {
+    border-radius: var(--consecutive-bubble-radius, 0.5rem);
+}
+
+.layout-linear .message-first-in-group .message-bubble {
+    border-radius: var(--first-bubble-radius, 1rem 1rem 0.5rem 0.5rem);
+}
+
+.layout-linear .message-last-in-group .message-bubble {
+    border-radius: var(--last-bubble-radius, 0.5rem 0.5rem 1rem 1rem);
+}
+
+.layout-linear .message-first-in-group.message-last-in-group .message-bubble {
+    border-radius: var(--bubble-radius, 1rem);
+}
+
+/* iMessage Theme */
+.theme-imessage {
+    --layout: alternating;
+    --message-spacing: 0.5rem;
+    --message-gap: 0.5rem;
+    --message-padding: 0.25rem 1rem;
+    --avatar-size: 0;
+    --bubble-bg: #e9e9eb;
+    --bubble-text: #000;
+    --bubble-radius: 1.25rem;
+    --consecutive-bubble-radius: 1.25rem;
+    --first-bubble-radius: 1.25rem;
+    --last-bubble-radius: 1.25rem;
+    --user-bubble-bg: #0a84ff;
+    --user-bubble-text: #fff;
+    --footer-justify: flex-end;
+    --timestamp-text: #8e8e93;
+}
+
+/* Slack Theme */
+.theme-slack {
+    --layout: linear;
+    --message-spacing: 0.125rem;
+    --message-gap: 0.5rem;
+    --message-padding: 0 1rem;
+    --avatar-size: 2.5rem;
+    --bubble-bg: transparent;
+    --bubble-text: #1d1c1d;
+    --bubble-radius: 0.25rem;
+    --consecutive-bubble-radius: 0.25rem;
+    --first-bubble-radius: 0.25rem;
+    --last-bubble-radius: 0.25rem;
+    --header-text: #1d1c1d;
+    --timestamp-text: #616061;
+    --reaction-bg: #f8f8f8;
+    --action-text: #616061;
+    --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+/* Bumble Theme */
+.theme-bumble {
+    --layout: alternating;
+    --message-spacing: 0.75rem;
+    --message-gap: 0.75rem;
+    --message-padding: 0.5rem 1rem;
+    --avatar-size: 2.5rem;
+    --bubble-bg: #f8f8f8;
+    --bubble-text: #000;
+    --bubble-radius: 1.5rem;
+    --consecutive-bubble-radius: 1.5rem;
+    --first-bubble-radius: 1.5rem;
+    --last-bubble-radius: 1.5rem;
+    --user-bubble-bg: #ffc629;
+    --user-bubble-text: #000;
+    --header-text: #000;
+    --timestamp-text: #666;
+}
+
+/* Halloween Theme */
+.theme-halloween {
+    --message-font: "Creepster", system-ui;
+    --message-gap: 1rem;
+    --message-padding: 1rem;
+    --avatar-size: 3rem;
+    --avatar-radius: 0.5rem;
+    --bubble-bg: #2c1810;
+    --bubble-text: #ff6b00;
+    --bubble-radius: 0.5rem;
+    --bubble-border: 2px solid #ff6b00;
+    --bubble-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+    --user-bubble-bg: #ff6b00;
+    --user-bubble-text: #000;
+    --header-text: #ff6b00;
+    --timestamp-text: #ff6b00;
+    --reaction-bg: #2c1810;
+    --action-text: #ff6b00;
+}
+
+/* Container Themes */
+.chat-container {
+    --container-bg: var(--background);
+    --container-text: var(--foreground);
+    --input-bg: var(--secondary);
+    --input-text: var(--foreground);
+    --input-border: transparent;
+    --input-radius: 0.5rem;
+    --toolbar-bg: var(--background);
+    --toolbar-border: var(--border);
+    --scrollbar-thumb: var(--secondary);
+    --scrollbar-track: transparent;
+    
+    background: var(--container-bg);
+    color: var(--container-text);
+}
+
+.chat-container .chat-input {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+}
+
+.chat-container .chat-toolbar {
+    background: var(--toolbar-bg);
+    border-bottom: 1px solid var(--toolbar-border);
+}
+
+.chat-container .chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container .chat-messages::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+.chat-container .chat-messages::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+
+/* Container Theme: iMessage */
+.theme-imessage.chat-container {
+    --container-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #e5e5ea;
+    --input-radius: 1.25rem;
+    --toolbar-bg: rgba(255, 255, 255, 0.8);
+    --toolbar-border: #e5e5ea;
+    --scrollbar-thumb: #8e8e93;
+}
+
+/* Container Theme: Slack */
+.theme-slack.chat-container {
+    --container-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #868686;
+    --input-radius: 0.25rem;
+    --toolbar-bg: #ffffff;
+    --toolbar-border: #e5e5e5;
+    --scrollbar-thumb: #868686;
+}
+
+/* Container Theme: Bumble */
+.theme-bumble.chat-container {
+    --container-bg: #ffffff;
+    --input-bg: #f8f8f8;
+    --input-border: transparent;
+    --input-radius: 1.5rem;
+    --toolbar-bg: #ffffff;
+    --toolbar-border: #f0f0f0;
+    --scrollbar-thumb: #ffc629;
+}
+
+/* Container Theme: Halloween */
+.theme-halloween.chat-container {
+    --container-bg: #1a0f0a;
+    --container-text: #ff6b00;
+    --input-bg: #2c1810;
+    --input-text: #ff6b00;
+    --input-border: #ff6b00;
+    --input-radius: 0.5rem;
+    --toolbar-bg: #2c1810;
+    --toolbar-border: #ff6b00;
+    --scrollbar-thumb: #ff6b00;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b00' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+} 

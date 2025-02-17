@@ -1,15 +1,19 @@
-export type MessageRole = "system" | "user" | "assistant";
-
-export interface BaseMessageProps {
-    role: MessageRole;
+export interface Message {
+    id: string;
+    role: "system" | "user" | "assistant";
     content: string;
     isLoading?: boolean;
     timestamp?: Date;
     avatar?: string;
     username?: string;
+    reactions?: Array<{
+        emoji: string;
+        count: number;
+        userReacted?: boolean;
+        effect?: "gentle" | "loud" | "slam" | "ha-ha";
+    }>;
     onContentChange?: (content: string) => void;
     onDelete?: () => void;
-    metadata?: Record<string, any>;
 }
 
 export interface MessageAction {
@@ -19,28 +23,19 @@ export interface MessageAction {
 }
 
 // Platform-specific props
-export interface SlackMessageProps extends BaseMessageProps {
-    reactions?: Array<{
-        emoji: string;
-        count: number;
-        userReacted?: boolean;
-    }>;
+export interface SlackMessageProps extends Message {
     threadCount?: number;
     isPinned?: boolean;
     isEdited?: boolean;
 }
 
-export interface MessengerMessageProps extends BaseMessageProps {
+export interface MessengerMessageProps extends Message {
     isRead?: boolean;
     isSent?: boolean;
     isDelivered?: boolean;
-    reactions?: Array<{
-        emoji: string;
-        userId: string;
-    }>;
 }
 
-export interface DiscordMessageProps extends BaseMessageProps {
+export interface DiscordMessageProps extends Message {
     isReplying?: boolean;
     replyTo?: {
         username: string;
@@ -54,7 +49,7 @@ export interface DiscordMessageProps extends BaseMessageProps {
     roles?: string[];
 }
 
-export interface BumbleMessageProps extends BaseMessageProps {
+export interface BumbleMessageProps extends Message {
     showHeader?: boolean;
     isMatch?: boolean;
     isVerified?: boolean;
@@ -63,18 +58,14 @@ export interface BumbleMessageProps extends BaseMessageProps {
     isTyping?: boolean;
 }
 
-export interface IMessageProps extends BaseMessageProps {
-    isDelivered?: boolean;
-    reactions?: Array<{
-        emoji: string;
-        effect?: "gentle" | "loud" | "slam" | "ha-ha";
-    }>;
+export interface IMessageProps extends Message {
     tapback?: "heart" | "thumbsUp" | "thumbsDown" | "ha-ha" | "exclamation" | "question";
     subject?: string;
+    isDelivered?: boolean;
     hasReadReceipt?: boolean;
 }
 
-export interface GrokMinimalMessageProps extends BaseMessageProps {
+export interface GrokMinimalMessageProps extends Message {
     responseTime?: string;
     actions?: {
         onRegenerate?: () => void;
