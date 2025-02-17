@@ -1,19 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageBlock } from "./message-block";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronRight, Save, Code, Loader2, Settings, History, Eraser, Download } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useChat, Message } from '@ai-sdk/react'
-import { BumbleMessage } from "../messages/bumble-message";
 import { ThemeableMessage } from "../messages/themeable-message";
 import { ChatToolbar } from "./chat-toolbar";
 import { SystemMessageEditor, SystemBlockType } from "./system-message-editor";
-import { ChatInput } from "./input/chat-input";
+import { SingleChatInput } from "./input/single-chat-input";
 
 interface ModelConfig {
     model: string;
@@ -97,14 +93,19 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
             .filter(content => content.trim())
             .join("\n\n");
         setSystemMessage(newSystemMessage);
-    }, [systemBlocks]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSubmit(e);
+        // Also update the system message in the messages array
+        if (messages.length > 0 && messages[0].role === 'system') {
+            const updatedMessages = [...messages];
+            updatedMessages[0] = {
+                ...updatedMessages[0],
+                content: newSystemMessage,
+                parts: [{ type: "text", text: newSystemMessage }]
+            };
+            setMessages(updatedMessages);
         }
-    };
+    }, [systemBlocks, messages, setMessages]);
+
     const handleMessageChange = (index: number, content: string) => {
         const newMessages = [...messages];
         newMessages[index] = {
@@ -222,10 +223,13 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                 <div className="flex-1 p-4 overflow-hidden">
                     <div className="h-full overflow-auto">
                         <pre className="text-sm bg-secondary/5 p-4 rounded whitespace-pre-wrap break-words">
-                            {JSON.stringify(messages.map(msg => ({
-                                role: msg.role as "system" | "user" | "assistant",
-                                content: msg.content
-                            })), null, 2)}
+                            {JSON.stringify({
+                                systemBlocks,
+                                messages: messages.map(msg => ({
+                                    role: msg.role as "system" | "user" | "assistant",
+                                    content: msg.content
+                                }))
+                            }, null, 2)}
                         </pre>
                     </div>
                 </div>
@@ -391,7 +395,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                         {mainContent}
                     </div>
                     {!isJsonView && (
-                        <ChatInput
+                        <SingleChatInput
                             value={input}
                             onChange={(value) => handleInputChange({ target: { value } } as any)}
                             onSubmit={(e) => {

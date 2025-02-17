@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
-            messages: messages.map(msg => ({
+            messages: messages.map((msg: Message) => ({
                 role: msg.role,
                 content: msg.content[0].text
             })),
