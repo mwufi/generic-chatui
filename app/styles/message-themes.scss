@@ -168,21 +168,70 @@
 
 // Theme: Bumble
 .theme-bumble {
-  --msg-primary: #ffc629;
+  --msg-primary: #ffb929;  // Slightly more vibrant yellow
   --msg-secondary: #f8f8f8;
   --msg-content: #000;
+  --flex-user: row-reverse;
   --border-radius: 1.25rem;
+  --font-size-sm: 1rem;
+  --font-weight: 400;
+  --bubble-padding: 0.75rem 1.25rem;
 
+  .message-container {
+    flex-direction: row-reverse;
+  }
   .message-bubble {
     background: var(--msg-secondary);
+    font-weight: var(--font-weight);
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;  // Asymmetric corners
   }
 
   &.message-user .message-bubble {
     background: var(--msg-primary);
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;  // Mirrored corners for user
   }
 
+  // Hide avatar by default
   .message-avatar {
-    display: var(--show-avatar, none);
+    display: none;
+  }
+
+  // Consecutive messages should have different radius
+  &.message-consecutive .message-bubble {
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  }
+
+  &.message-user.message-consecutive .message-bubble {
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+  }
+
+  &.message-first-in-group .message-bubble {
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  }
+
+  &.message-user.message-first-in-group .message-bubble {
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+  }
+
+  &.message-last-in-group .message-bubble {
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  }
+
+  &.message-user.message-last-in-group .message-bubble {
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+  }
+
+  // Timestamp style
+  .message-timestamp {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+
+  // Container specific styles
+  &.chat-container {
+    --msg-bg: #fff;
+    background: var(--msg-bg);
   }
 }
 

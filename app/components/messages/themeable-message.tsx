@@ -68,8 +68,7 @@ export function ThemeableMessage({
                     </div>
                 )}
             </div>
-            <div>
-
+            <div className="w-full">
                 {/* Header */}
                 <div className="message-header">
                     <span className="message-username">{username}</span>
@@ -81,7 +80,7 @@ export function ThemeableMessage({
                     </span>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2" style={{ flexDirection: `${isUser ? "var(--flex-user)" : "row"}` }}>
                     {/* Message Bubble */}
                     <div className="message-bubble">
                         {isLoading ? (
