@@ -271,6 +271,11 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+                                <SelectItem value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</SelectItem>
+                                <SelectItem value="o1-mini">O1 Mini</SelectItem>
+                                <SelectItem value="o1">O1</SelectItem>
+                                <SelectItem value="gpt-4o-mini-realtime-preview">GPT-4 Mini</SelectItem>
+                                <SelectItem value="o3-mini">O3 Mini</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
