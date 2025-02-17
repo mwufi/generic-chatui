@@ -231,7 +231,41 @@
     --msg-bg: #fff;
     background: var(--msg-bg);
   }
+
+  // Toolbar styling
+  .chat-toolbar {
+    background: white;
+    border-bottom: 1px solid #eee;
+
+    .chat-toolbar-input {
+      background: #f8f8f8;
+      border: none;
+      border-radius: 1.25rem;
+      
+      &:focus {
+        background: white;
+        border: 1px solid var(--msg-primary);
+        box-shadow: none;
+      }
+    }
+
+    .chat-toolbar-button {
+      color: #666;
+      border-radius: 50%;
+      
+      &:hover {
+        background: #f8f8f8;
+        color: var(--msg-primary);
+      }
+      
+      &.text-primary {
+        color: var(--msg-primary);
+        background: #f8f8f8;
+      }
+    }
+  }
 }
+
 // Theme: iMessage
 .theme-imessage {
   --msg-primary: #3296fa;
@@ -248,6 +282,35 @@
   &.message-user .message-bubble {
     background: var(--msg-primary);
     color: var(--msg-content-light);
+  }
+
+  // Toolbar styling
+  .chat-toolbar {
+    background: #f2f2f7;
+    border-bottom: 1px solid #d1d1d6;
+
+    .chat-toolbar-input {
+      background: white;
+      border: 1px solid #d1d1d6;
+      border-radius: 8px;
+      
+      &:focus {
+        border-color: var(--msg-primary);
+        box-shadow: 0 0 0 1px var(--msg-primary);
+      }
+    }
+
+    .chat-toolbar-button {
+      color: var(--msg-primary);
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      
+      &.text-primary {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
   }
 }
 
@@ -276,6 +339,34 @@
 
   .message-username {
     font-weight: 900;
+  }
+
+  // Toolbar styling
+  .chat-toolbar {
+    background: var(--msg-bg);
+    border-bottom: 1px solid var(--msg-border);
+
+    .chat-toolbar-input {
+      border: 1px solid var(--msg-border);
+      
+      &:focus {
+        border-color: var(--msg-primary);
+        box-shadow: 0 0 0 1px var(--msg-primary);
+      }
+    }
+
+    .chat-toolbar-button {
+      color: var(--msg-content-secondary);
+      
+      &:hover {
+        background: var(--msg-secondary);
+        color: var(--msg-primary);
+      }
+      
+      &.text-primary {
+        color: var(--msg-primary);
+      }
+    }
   }
 }
 
@@ -393,6 +484,41 @@
       height: 1.25rem;
       background: var(--msg-content-secondary);
       opacity: 0.4;
+    }
+  }
+
+  // Toolbar styling
+  .chat-toolbar {
+    background: var(--msg-primary);
+    border-bottom: 1px solid var(--msg-border);
+
+    .chat-toolbar-input {
+      background: transparent;
+      border-color: transparent;
+      color: var(--msg-content);
+      
+      &:focus {
+        border-color: var(--msg-content-secondary);
+        box-shadow: none;
+      }
+      
+      &::placeholder {
+        color: var(--msg-content-secondary);
+      }
+    }
+
+    .chat-toolbar-button {
+      color: var(--msg-content-secondary);
+      
+      &:hover {
+        background: var(--msg-secondary);
+        color: var(--msg-content);
+      }
+      
+      &.text-primary {
+        color: var(--msg-content);
+        background: var(--msg-secondary);
+      }
     }
   }
 }

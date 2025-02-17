@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useChat, Message } from '@ai-sdk/react'
 import { BumbleMessage } from "../messages/bumble-message";
 import { ThemeableMessage } from "../messages/themeable-message";
+import { ChatToolbar } from "./chat-toolbar";
+import { SystemMessageEditor, SystemBlockType } from "./system-message-editor";
 
 interface ModelConfig {
     model: string;
@@ -32,9 +34,20 @@ interface Conversation {
     config?: ModelConfig;
 }
 
+interface SystemBlock {
+    id: string;
+    type: SystemBlockType;
+    content: string;
+}
+
 export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation) => void }) {
     const [isSystemVisible, setIsSystemVisible] = useState(true);
     const [systemMessage, setSystemMessage] = useState("You are a helpful assistant.");
+    const [systemBlocks, setSystemBlocks] = useState<SystemBlock[]>([{
+        id: "default",
+        type: "text",
+        content: "You are a helpful assistant."
+    }]);
     const [convoName, setConvoName] = useState("New Conversation");
     const [isJsonView, setIsJsonView] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -76,20 +89,14 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
         },
     });
 
-    // Update system message in chat when it changes
+    // Update system message when blocks change
     useEffect(() => {
-        const systemMsg = messages.find(msg => msg.role === "system");
-        if (systemMsg && systemMsg.content !== systemMessage) {
-            // Reset messages with new system message
-            messages.splice(0, messages.length);
-            messages.push({
-                id: "system",
-                role: "system",
-                content: systemMessage,
-                parts: [{ type: "text", text: systemMessage }]
-            });
-        }
-    }, [systemMessage, messages]);
+        const newSystemMessage = systemBlocks
+            .map(block => block.content)
+            .filter(content => content.trim())
+            .join("\n\n");
+        setSystemMessage(newSystemMessage);
+    }, [systemBlocks]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -131,89 +138,40 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
     };
 
     const toolbar = (
-        <div className="h-12 px-4 flex items-center justify-between gap-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="flex items-center gap-2">
-                <Input
-                    value={convoName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConvoName(e.target.value)}
-                    className="max-w-[300px] h-8 bg-transparent"
-                    placeholder="Untitled conversation"
-                />
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Eraser className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Download className="h-4 w-4" />
-                </Button>
-            </div>
-            <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsJsonView(!isJsonView)}
-                    className={cn("h-8 w-8", isJsonView && "text-primary")}
-                >
-                    <Code className="h-4 w-4" />
-                </Button>
-                {saveConvo && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleSaveConversation}
-                        className="h-8 w-8"
-                    >
-                        <Save className="h-4 w-4" />
-                    </Button>
-                )}
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={cn("h-8 w-8", isSidebarOpen && "text-primary")}
-                >
-                    <Settings className="h-4 w-4" />
-                </Button>
-            </div>
-        </div>
-
-    )
+        <ChatToolbar
+            convoName={convoName}
+            onConvoNameChange={(name: string) => setConvoName(name)}
+            isJsonView={isJsonView}
+            onJsonViewToggle={() => setIsJsonView(!isJsonView)}
+            isSidebarOpen={isSidebarOpen}
+            onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+            onSave={saveConvo ? handleSaveConversation : undefined}
+            onClear={() => setMessages([messages[0]])}
+            onExport={() => {
+                const json = JSON.stringify(messages, null, 2);
+                const blob = new Blob([json], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${convoName}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }}
+        />
+    );
 
     const mainContent = (
         <div className="flex-1 flex flex-col min-w-0">
             {!isJsonView ? (
                 <>
-                    {/* System Message */}
+                    {/* System Message Editor */}
                     <div className="px-4 py-2">
-                        <div
-                            className={cn(
-                                "rounded-lg transition-all duration-200",
-                                isSystemVisible ? "bg-secondary/40 shadow-sm" : "bg-transparent"
-                            )}
-                        >
-                            <button
-                                className="w-full px-4 py-2 flex items-center gap-2 text-sm"
-                                onClick={() => setIsSystemVisible(!isSystemVisible)}
-                            >
-                                <span className={cn(
-                                    "transition-transform duration-200",
-                                    isSystemVisible ? "rotate-0" : "-rotate-90"
-                                )}>
-                                    <ChevronDown className="h-4 w-4" />
-                                </span>
-                                System message
-                            </button>
-                            {isSystemVisible && (
-                                <div className="px-4 pb-3 animate-in slide-in-from-top-2 duration-200">
-                                    <input
-                                        type="text"
-                                        value={systemMessage}
-                                        onChange={(e) => setSystemMessage(e.target.value)}
-                                        className="w-full bg-transparent outline-none text-sm"
-                                        placeholder="Set the AI's behavior and context..."
-                                    />
-                                </div>
-                            )}
-                        </div>
+                        <SystemMessageEditor
+                            blocks={systemBlocks}
+                            onBlocksChange={setSystemBlocks}
+                            isVisible={isSystemVisible}
+                            onVisibilityToggle={() => setIsSystemVisible(!isSystemVisible)}
+                        />
                     </div>
 
                     {/* Messages */}
