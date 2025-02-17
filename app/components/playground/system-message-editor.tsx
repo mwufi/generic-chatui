@@ -112,7 +112,7 @@ export function SystemMessageEditor({
             className
         )}>
             <button
-                className="w-full px-4 py-2 flex items-center gap-2 text-sm"
+                className="w-full px-4 py-4 flex items-center gap-2 text-sm"
                 onClick={onVisibilityToggle}
             >
                 <span className={cn(
@@ -125,7 +125,7 @@ export function SystemMessageEditor({
             </button>
 
             {isVisible && (
-                <div className="px-4 pb-3 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                <div className="px-6 pb-3 space-y-4 animate-in slide-in-from-top-2 duration-200">
                     {blocks.map((block, index) => (
                         <div key={block.id} className="relative">
                             {renderBlock(block)}

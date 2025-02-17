@@ -50,7 +50,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [config, setConfig] = useState<ModelConfig>({
-        model: "gpt-4o",
+        model: "deepseek-chat",
         responseFormat: "text",
         temperature: 1.0,
         maxTokens: 2048,
@@ -201,6 +201,9 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                                     layout={layout}
                                     onContentChange={(content: string) => handleMessageChange(index + 1, content)}
                                     onDelete={() => handleDeleteMessage(index + 1)}
+                                    parts={message.parts?.filter(part =>
+                                        part.type === "text" || part.type === "reasoning"
+                                    )}
                                 />
                             );
                         })}
@@ -276,6 +279,8 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                                 <SelectItem value="o1">O1</SelectItem>
                                 <SelectItem value="gpt-4o-mini-realtime-preview">GPT-4 Mini</SelectItem>
                                 <SelectItem value="o3-mini">O3 Mini</SelectItem>
+                                <SelectItem value="deepseek-chat">DeepSeek V3</SelectItem>
+                                <SelectItem value="deepseek-reasoner">DeepSeek R1</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

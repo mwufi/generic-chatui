@@ -42,6 +42,10 @@
   }
 }
 
+.flex-user-direction {
+  flex-direction: var(--flex-user);
+}
+
 // Avatar
 .message-avatar {
   width: var(--avatar-size);

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 
@@ -9,6 +9,11 @@ export interface ThemeableMessageProps {
     id: string;
     role: "system" | "user" | "assistant";
     content: string;
+    parts?: Array<{
+        type: "text" | "reasoning";
+        text?: string;
+        reasoning?: string;
+    }>;
     isLoading?: boolean;
     timestamp?: Date;
     avatar?: string;
@@ -31,6 +36,7 @@ export interface ThemeableMessageProps {
 export function ThemeableMessage({
     role,
     content,
+    parts = [],
     isLoading,
     timestamp = new Date(),
     avatar,
@@ -45,7 +51,10 @@ export function ThemeableMessage({
     layout = "alternating",
 }: ThemeableMessageProps) {
     const [isHovered, setIsHovered] = useState(false);
+    const [showReasoning, setShowReasoning] = useState(true);
     const contentRef = useRef<HTMLDivElement>(null);
+
+    const hasReasoning = parts.some(part => part.type === "reasoning");
 
     const handleSave = () => {
         if (!contentRef.current) return;
@@ -101,9 +110,12 @@ export function ThemeableMessage({
                         })}
                     </span>
                 </div>
-                
+
                 {/* note: flex-user is defined in the message-themes.scss file. keep this! */}
-                <div className="flex gap-2" style={{ flexDirection: role === "user" ? "var(--flex-user)" : "row" }}>
+                <div className={cn(
+                    "flex gap-2",
+                    role === "user" ? "flex-user-direction" : "flex-row"
+                )}>
                     {/* Message Bubble */}
                     <div className="message-bubble">
                         {isLoading ? (
@@ -113,16 +125,29 @@ export function ThemeableMessage({
                                 <div className="loading-dot" />
                             </div>
                         ) : (
-                            <div
-                                ref={contentRef}
-                                className="message-text focus:outline-none"
-                                contentEditable
-                                suppressContentEditableWarning
-                                onKeyDown={handleKeyDown}
-                                onBlur={handleSave}
-                            >
-                                {content}
-                            </div>
+                            <>
+                                <div
+                                    ref={contentRef}
+                                    className="message-text focus:outline-none"
+                                    contentEditable
+                                    suppressContentEditableWarning
+                                    onKeyDown={handleKeyDown}
+                                    onBlur={handleSave}
+                                >
+                                    {content}
+                                </div>
+                                {hasReasoning && showReasoning && (
+                                    <div className="mt-2 p-2 bg-muted/50 rounded text-sm font-mono">
+                                        {parts.map((part, index) => (
+                                            part.type === "reasoning" && (
+                                                <div key={index} className="whitespace-pre-wrap text-muted-foreground">
+                                                    {part.reasoning}
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
 
@@ -131,6 +156,20 @@ export function ThemeableMessage({
                         "message-actions",
                         isHovered ? "opacity-100" : "opacity-0"
                     )}>
+                        {hasReasoning && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                    "message-action-button",
+                                    showReasoning && "bg-muted"
+                                )}
+                                onClick={() => setShowReasoning(!showReasoning)}
+                                title={showReasoning ? "Hide reasoning" : "Show reasoning"}
+                            >
+                                <Brain className="h-4 w-4" />
+                            </Button>
+                        )}
                         <Button
                             variant="ghost"
                             size="sm"

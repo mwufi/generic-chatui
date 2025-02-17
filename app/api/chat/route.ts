@@ -1,5 +1,6 @@
 import { openai, type OpenAIProvider } from '@ai-sdk/openai';
 import { anthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
+import { deepseek, type DeepSeekProvider } from '@ai-sdk/deepseek';
 import { streamText } from 'ai';
 
 // Allow streaming responses up to 30 seconds
@@ -13,11 +14,12 @@ export async function POST(req: Request) {
     console.log("Model:", model);
 
     // Map of model prefixes to their respective clients
-    const modelClients: Record<string, OpenAIProvider | AnthropicProvider> = {
+    const modelClients: Record<string, OpenAIProvider | AnthropicProvider | DeepSeekProvider> = {
         'claude': anthropic,
         'gpt': openai,
         'o1': openai,
-        'o3': openai
+        'o3': openai,
+        'deepseek': deepseek
     };
 
     // Determine which client to use based on model prefix
@@ -31,5 +33,7 @@ export async function POST(req: Request) {
         messages,
     });
 
-    return result.toDataStreamResponse();
+    return result.toDataStreamResponse({
+        sendReasoning: model.startsWith('deepseek') || model.startsWith('o3') || model.startsWith('o1'),
+    });
 }
