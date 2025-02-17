@@ -7,6 +7,7 @@
   --msg-content-secondary: #666;
   --msg-bg: #fff;
   --msg-border: #eee;
+  --flex-user: row-reverse;
   
   // Spacing
   --spacing-xs: 0.25rem;
@@ -17,12 +18,9 @@
   // Sizes
   --avatar-size: 2.5rem;
   --bubble-padding: 0.75rem 1rem;
-  --border-radius: 1rem;
+  --border-radius: 0.7rem;
   
   // Typography
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
   --font-family: system-ui, -apple-system, sans-serif;
   
   // Animation
@@ -234,14 +232,13 @@
     background: var(--msg-bg);
   }
 }
-
 // Theme: iMessage
 .theme-imessage {
-  --msg-primary: #0a84ff;
-  --msg-secondary: #e9e9eb;
+  --msg-primary: #3296fa;
+  --msg-secondary: #F2F2F2;
   --msg-content: #000;
   --msg-content-light: #fff;
-  --border-radius: 1.25rem;
+  --border-radius: 1.2rem;
   --bubble-padding: 0.5rem 1rem;
 
   .message-bubble {
@@ -260,6 +257,7 @@
   --msg-secondary: transparent;
   --msg-content: #1d1c1d;
   --msg-content-secondary: #616061;
+  --flex-user: row;
   --border-radius: 0;
   --bubble-padding: 0;
   

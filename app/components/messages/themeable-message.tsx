@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export interface ThemeableMessageProps {
     id: string;
@@ -45,14 +45,36 @@ export function ThemeableMessage({
     layout = "alternating",
 }: ThemeableMessageProps) {
     const [isHovered, setIsHovered] = useState(false);
-    const isUser = role === "user";
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    const handleSave = () => {
+        if (!contentRef.current) return;
+        const newContent = contentRef.current.innerText;
+        if (newContent !== content) {
+            onContentChange?.(newContent);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            handleSave();
+            contentRef.current?.blur();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            if (contentRef.current) {
+                contentRef.current.innerText = content;
+                contentRef.current.blur();
+            }
+        }
+    };
 
     return (
         <div
             className={cn(
-                "message-container",
+                "message-container antialiased",
                 `theme-${theme}`,
-                isUser && "message-user",
+                role === "user" && "message-user",
                 className
             )}
             onMouseEnter={() => setIsHovered(true)}
@@ -79,8 +101,9 @@ export function ThemeableMessage({
                         })}
                     </span>
                 </div>
-
-                <div className="flex gap-2" style={{ flexDirection: `${isUser ? "var(--flex-user)" : "row"}` }}>
+                
+                {/* note: flex-user is defined in the message-themes.scss file. keep this! */}
+                <div className="flex gap-2" style={{ flexDirection: role === "user" ? "var(--flex-user)" : "row" }}>
                     {/* Message Bubble */}
                     <div className="message-bubble">
                         {isLoading ? (
@@ -90,7 +113,16 @@ export function ThemeableMessage({
                                 <div className="loading-dot" />
                             </div>
                         ) : (
-                            <div className="message-text">{content}</div>
+                            <div
+                                ref={contentRef}
+                                className="message-text focus:outline-none"
+                                contentEditable
+                                suppressContentEditableWarning
+                                onKeyDown={handleKeyDown}
+                                onBlur={handleSave}
+                            >
+                                {content}
+                            </div>
                         )}
                     </div>
 
@@ -99,15 +131,6 @@ export function ThemeableMessage({
                         "message-actions",
                         isHovered ? "opacity-100" : "opacity-0"
                     )}>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="message-action-button"
-                            onClick={() => onContentChange?.(content)}
-                            title="Edit message"
-                        >
-                            <Pencil className="h-4 w-4" />
-                        </Button>
                         <Button
                             variant="ghost"
                             size="sm"
@@ -126,7 +149,6 @@ export function ThemeableMessage({
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </div>
-
                 </div>
                 {/* Footer */}
                 <div className="message-footer">

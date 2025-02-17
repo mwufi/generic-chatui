@@ -40,7 +40,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const [config, setConfig] = useState<ModelConfig>({
-        model: "gpt-4",
+        model: "gpt-4o",
         responseFormat: "text",
         temperature: 1.0,
         maxTokens: 2048,
@@ -48,10 +48,10 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
         topP: 1.0,
         frequencyPenalty: 0.0,
         presencePenalty: 0.0,
-        theme: "default"
+        theme: "bumble"
     });
 
-    const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+    const { messages, setMessages, input, handleInputChange, handleSubmit, status } = useChat({
         api: "/api/chat",
         initialMessages: [
             {
@@ -244,6 +244,19 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                                 />
                             );
                         })}
+                        {status === "submitted" && (
+                            <ThemeableMessage
+                                key="loading"
+                                id="loading"
+                                isLoading={true}
+                                role="assistant"
+                                content="..."
+                                theme={config.theme}
+                                isFirstInGroup={true}
+                                isLastInGroup={true}
+                                layout={config.theme === "slack" ? "linear" : "alternating"}
+                            />
+                        )}
                     </div>
 
                     {/* Input Bar */}
@@ -257,7 +270,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                             rows={1}
                             className="flex-1 resize-none bg-secondary/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary"
                         />
-                        <Button type="submit" disabled={isLoading || !input.trim()}>
+                        <Button type="submit" disabled={status === "submitted" || !input.trim()}>
                             Send
                         </Button>
                     </form>
