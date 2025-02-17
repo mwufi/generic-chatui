@@ -36,14 +36,21 @@ export function MessengerMessage({
 
             {/* Message Content */}
             <div className={cn(
-                "relative rounded-2xl px-3 py-2 text-sm",
+                "relative rounded-2xl px-3 py-2 text-sm min-h-[2.5rem] min-w-[4rem]",
                 isUser ? "bg-primary text-primary-foreground" : "bg-secondary",
-                isLoading && "animate-pulse"
+                isLoading && "animate-pulse bg-muted/50"
             )}>
-                {content}
+                {isLoading ? (
+                    <div className="flex flex-col gap-2">
+                        <div className="h-2 bg-muted rounded w-24" />
+                        <div className="h-2 bg-muted rounded w-16" />
+                    </div>
+                ) : (
+                    content
+                )}
 
                 {/* Reactions */}
-                {reactions.length > 0 && (
+                {reactions.length > 0 && !isLoading && (
                     <div className={cn(
                         "absolute -bottom-2 flex -space-x-1 bg-background rounded-full px-1 py-0.5 shadow-sm border",
                         isUser ? "left-2" : "right-2"
@@ -58,7 +65,7 @@ export function MessengerMessage({
             </div>
 
             {/* Status Indicators */}
-            {isUser && (
+            {isUser && !isLoading && (
                 <div className="self-end mb-1 flex flex-col items-end">
                     <div className="text-[10px] text-muted-foreground">
                         {timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}

@@ -52,4 +52,34 @@ export interface DiscordMessageProps extends BaseMessageProps {
         name?: string;
     }>;
     roles?: string[];
+}
+
+export interface BumbleMessageProps extends BaseMessageProps {
+    isMatch?: boolean;
+    isVerified?: boolean;
+    distance?: string;
+    lastActive?: string;
+    isTyping?: boolean;
+}
+
+export interface IMessageProps extends BaseMessageProps {
+    isDelivered?: boolean;
+    reactions?: Array<{
+        emoji: string;
+        effect?: "gentle" | "loud" | "slam" | "ha-ha";
+    }>;
+    tapback?: "heart" | "thumbsUp" | "thumbsDown" | "ha-ha" | "exclamation" | "question";
+    subject?: string;
+    hasReadReceipt?: boolean;
+}
+
+export interface GrokMinimalMessageProps extends BaseMessageProps {
+    responseTime?: string;
+    actions?: {
+        onRegenerate?: () => void;
+        onCopy?: () => void;
+        onShare?: () => void;
+        onLike?: () => void;
+        onDislike?: () => void;
+    };
 } 
