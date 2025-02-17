@@ -307,7 +307,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                             <SelectItem value="imessage">iMessage</SelectItem>
                             <SelectItem value="slack">Slack</SelectItem>
                             <SelectItem value="bumble">Bumble</SelectItem>
-                            <SelectItem value="halloween">Halloween</SelectItem>
+                            <SelectItem value="discord">Discord</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
