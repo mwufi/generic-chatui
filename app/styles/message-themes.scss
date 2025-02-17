@@ -235,7 +235,6 @@
   // Toolbar styling
   .chat-toolbar {
     background: white;
-    border-bottom: 1px solid #eee;
 
     .chat-toolbar-input {
       background: #f8f8f8;
@@ -344,7 +343,6 @@
   // Toolbar styling
   .chat-toolbar {
     background: var(--msg-bg);
-    border-bottom: 1px solid var(--msg-border);
 
     .chat-toolbar-input {
       border: 1px solid var(--msg-border);
@@ -490,7 +488,6 @@
   // Toolbar styling
   .chat-toolbar {
     background: var(--msg-primary);
-    border-bottom: 1px solid var(--msg-border);
 
     .chat-toolbar-input {
       background: transparent;
@@ -541,7 +538,6 @@
 
   .chat-toolbar {
     background: var(--msg-bg);
-    border-bottom: 1px solid var(--msg-border);
   }
 
   .chat-messages::-webkit-scrollbar {
