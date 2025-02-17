@@ -1,0 +1,306 @@
+// CSS Variables (Root level)
+:root {
+  // Colors
+  --msg-primary: #0a84ff;
+  --msg-secondary: #e9e9eb;
+  --msg-content: #000;
+  --msg-content-secondary: #666;
+  --msg-bg: #fff;
+  --msg-border: #eee;
+  
+  // Spacing
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 0.75rem;
+  --spacing-lg: 1rem;
+  
+  // Sizes
+  --avatar-size: 2.5rem;
+  --bubble-padding: 0.75rem 1rem;
+  --border-radius: 1rem;
+  
+  // Typography
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-family: system-ui, -apple-system, sans-serif;
+  
+  // Animation
+  --transition-speed: 200ms;
+}
+
+// Base Message Container
+.message-container {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  width: 100%;
+  font-family: var(--font-family);
+  transition: all var(--transition-speed) ease-in-out;
+  position: relative;
+
+  &.layout-alternating.message-user {
+    flex-direction: row-reverse;
+  }
+}
+
+// Avatar
+.message-avatar {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: none; // Hidden by default
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--msg-secondary);
+    color: var(--msg-content-secondary);
+    font-weight: 500;
+  }
+}
+
+// Content Area
+.message-content {
+  flex: 1;
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.message-header {
+  display: none; // Hidden by default
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+}
+
+.message-username {
+  font-weight: 500;
+  color: var(--msg-content-secondary);
+}
+
+.message-timestamp {
+  color: var(--msg-content-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.message-bubble {
+  position: relative;
+  padding: var(--bubble-padding);
+  border-radius: var(--border-radius);
+  max-width: fit-content;
+  background: var(--msg-secondary);
+  color: var(--msg-content);
+  font-size: var(--font-size-sm);
+}
+
+// Loading Animation
+.message-loading {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+
+  .loading-dot {
+    width: var(--spacing-sm);
+    height: var(--spacing-sm);
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+    animation: bounce 1s infinite;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+// Actions and Reactions
+.message-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  opacity: 0;
+  transition: opacity var(--transition-speed);
+
+  .message-container:hover & {
+    opacity: 1;
+  }
+}
+
+.message-action-button {
+  color: var(--msg-content-secondary);
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-speed);
+
+  &:hover {
+    background: var(--msg-secondary);
+  }
+}
+
+.message-reactions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.message-reaction {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--msg-secondary);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+// Theme: Bumble
+.theme-bumble {
+  --msg-primary: #ffc629;
+  --msg-secondary: #f8f8f8;
+  --msg-content: #000;
+  --border-radius: 1.25rem;
+
+  .message-bubble {
+    background: var(--msg-secondary);
+  }
+
+  &.message-user .message-bubble {
+    background: var(--msg-primary);
+  }
+
+  .message-avatar {
+    display: var(--show-avatar, none);
+  }
+}
+
+// Theme: iMessage
+.theme-imessage {
+  --msg-primary: #0a84ff;
+  --msg-secondary: #e9e9eb;
+  --msg-content: #000;
+  --msg-content-light: #fff;
+  --border-radius: 1.25rem;
+  --bubble-padding: 0.5rem 1rem;
+
+  .message-bubble {
+    background: var(--msg-secondary);
+  }
+
+  &.message-user .message-bubble {
+    background: var(--msg-primary);
+    color: var(--msg-content-light);
+  }
+}
+
+// Theme: Slack
+.theme-slack {
+  --msg-primary: #1d1c1d;
+  --msg-secondary: transparent;
+  --msg-content: #1d1c1d;
+  --msg-content-secondary: #616061;
+  --border-radius: 0;
+  --bubble-padding: 0;
+  
+  .message-header {
+    display: flex;
+  }
+
+  .message-avatar {
+    display: block;
+    border-radius: 0.25rem;
+  }
+
+  .message-bubble {
+    background: none;
+  }
+
+  .message-username {
+    font-weight: 900;
+  }
+}
+
+// Theme: Halloween
+.theme-halloween {
+  --msg-primary: #ff6b00;
+  --msg-secondary: #2c1810;
+  --msg-content: #ff6b00;
+  --msg-bg: #1a0f0a;
+  --msg-content-secondary: #ff6b00;
+  --font-family: "Creepster", system-ui;
+  --border-radius: 0.5rem;
+  --avatar-size: 3rem;
+
+  .message-bubble {
+    background: var(--msg-secondary);
+    border: 2px solid var(--msg-primary);
+    box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+  }
+
+  &.message-user .message-bubble {
+    background: var(--msg-primary);
+    color: var(--msg-bg);
+  }
+
+  .message-avatar {
+    display: block;
+    border: 2px solid var(--msg-primary);
+  }
+
+  .message-action-button {
+    color: var(--msg-primary);
+    &:hover {
+      background: var(--msg-secondary);
+    }
+  }
+
+  .message-reaction {
+    background: var(--msg-secondary);
+    border: 1px solid var(--msg-primary);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+// Container styles
+.chat-container {
+  background: var(--msg-bg);
+  color: var(--msg-content);
+
+  .chat-input {
+    background: var(--msg-secondary);
+    color: var(--msg-content);
+    border-radius: var(--border-radius);
+  }
+
+  .chat-toolbar {
+    background: var(--msg-bg);
+    border-bottom: 1px solid var(--msg-border);
+  }
+
+  .chat-messages::-webkit-scrollbar {
+    width: 8px;
+    &-track {
+      background: transparent;
+    }
+    &-thumb {
+      background: var(--msg-secondary);
+      border-radius: 4px;
+    }
+  }
+} 

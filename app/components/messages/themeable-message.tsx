@@ -52,11 +52,7 @@ export function ThemeableMessage({
             className={cn(
                 "message-container",
                 `theme-${theme}`,
-                `layout-${layout}`,
                 isUser && "message-user",
-                isFirstInGroup && "message-first-in-group",
-                isLastInGroup && "message-last-in-group",
-                !isFirstInGroup && "message-consecutive",
                 className
             )}
             onMouseEnter={() => setIsHovered(true)}
@@ -72,9 +68,8 @@ export function ThemeableMessage({
                     </div>
                 )}
             </div>
+            <div>
 
-            {/* Content Area */}
-            <div className="message-content">
                 {/* Header */}
                 <div className="message-header">
                     <span className="message-username">{username}</span>
@@ -86,52 +81,54 @@ export function ThemeableMessage({
                     </span>
                 </div>
 
-                {/* Message Bubble */}
-                <div className="message-bubble">
-                    {isLoading ? (
-                        <div className="message-loading">
-                            <div className="loading-dot" />
-                            <div className="loading-dot" />
-                            <div className="loading-dot" />
-                        </div>
-                    ) : (
-                        <div className="message-text">{content}</div>
-                    )}
-                </div>
+                <div className="flex gap-2">
+                    {/* Message Bubble */}
+                    <div className="message-bubble">
+                        {isLoading ? (
+                            <div className="message-loading">
+                                <div className="loading-dot" />
+                                <div className="loading-dot" />
+                                <div className="loading-dot" />
+                            </div>
+                        ) : (
+                            <div className="message-text">{content}</div>
+                        )}
+                    </div>
 
-                {/* Actions */}
-                <div className={cn(
-                    "message-actions",
-                    isHovered ? "opacity-100" : "opacity-0"
-                )}>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="message-action-button"
-                        onClick={() => onContentChange?.(content)}
-                        title="Edit message"
-                    >
-                        <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="message-action-button"
-                        onClick={onDelete}
-                        title="Delete message"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="message-action-button"
-                        title="More actions"
-                    >
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </div>
+                    {/* Actions */}
+                    <div className={cn(
+                        "message-actions",
+                        isHovered ? "opacity-100" : "opacity-0"
+                    )}>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="message-action-button"
+                            onClick={() => onContentChange?.(content)}
+                            title="Edit message"
+                        >
+                            <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="message-action-button"
+                            onClick={onDelete}
+                            title="Delete message"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="message-action-button"
+                            title="More actions"
+                        >
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </div>
 
+                </div>
                 {/* Footer */}
                 <div className="message-footer">
                     <div className="message-reactions">

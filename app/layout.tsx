@@ -1,5 +1,5 @@
 import "./globals.css";
-import "./styles/message-themes.css";
+import "./styles/message-themes.scss";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
