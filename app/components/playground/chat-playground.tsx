@@ -13,6 +13,7 @@ import { BumbleMessage } from "../messages/bumble-message";
 import { ThemeableMessage } from "../messages/themeable-message";
 import { ChatToolbar } from "./chat-toolbar";
 import { SystemMessageEditor, SystemBlockType } from "./system-message-editor";
+import { ChatInput } from "./input/chat-input";
 
 interface ModelConfig {
     model: string;
@@ -216,22 +217,6 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                             />
                         )}
                     </div>
-
-                    {/* Input Bar */}
-                    <form onSubmit={handleSubmit} className="p-4 flex gap-4">
-                        <textarea
-                            ref={inputRef}
-                            value={input}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Type a message..."
-                            rows={1}
-                            className="flex-1 resize-none bg-secondary/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary"
-                        />
-                        <Button type="submit" disabled={status === "submitted" || !input.trim()}>
-                            Send
-                        </Button>
-                    </form>
                 </>
             ) : (
                 <div className="flex-1 p-4 overflow-hidden">
@@ -392,17 +377,33 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
 
     return (
         <div className={cn(
-            "h-full grid chat-container",
+            "h-screen grid chat-container",
             `theme-${config.theme}`,
         )} style={{
             gridTemplateColumns: isSidebarOpen ? "1fr 320px" : "1fr",
         }}>
-            <div className="flex flex-col h-full overflow-hidden">
+            <div className="flex flex-col h-full">
                 <div className="p-2 shadow chat-toolbar">
                     {toolbar}
                 </div>
-                <div className="overflow-y-auto p-2 chat-messages">
-                    {mainContent}
+                <div className="flex-1 flex flex-col relative min-h-0">
+                    <div className="absolute inset-0 overflow-y-auto p-2 pb-40">
+                        {mainContent}
+                    </div>
+                    {!isJsonView && (
+                        <ChatInput
+                            value={input}
+                            onChange={(value) => handleInputChange({ target: { value } } as any)}
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                console.log("Submitting chat input:", input);
+                                handleSubmit(e);
+                            }}
+                            disabled={status === "submitted"}
+                            theme={config.theme}
+                            placeholder="Type a message..."
+                        />
+                    )}
                 </div>
             </div>
 

@@ -5,19 +5,23 @@ import { ModeSelector, InputMode } from "./mode-selector";
 import { SendButton } from "./send-button";
 
 interface ChatInputProps {
-    onSend: (message: { content: string; files?: File[] }) => void;
+    onChange?: (value: string) => void;
+    onSubmit: (e: React.FormEvent) => void;
+    value?: string;
     disabled?: boolean;
     placeholder?: string;
     theme?: string;
 }
 
 export function ChatInput({
-    onSend,
+    onChange,
+    onSubmit,
+    value = "",
     disabled,
     placeholder = "How can I help?",
     theme = "default"
 }: ChatInputProps) {
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(value);
     const [files, setFiles] = useState<File[]>([]);
     const [mode, setMode] = useState<InputMode>("auto");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -31,11 +35,17 @@ export function ChatInput({
         }
     }, [content]);
 
-    const handleSubmit = (e?: React.FormEvent) => {
-        e?.preventDefault();
+    // Sync with external value if provided
+    useEffect(() => {
+        if (value !== content) {
+            setContent(value);
+        }
+    }, [value]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
         if (content.trim() || files.length > 0) {
-            onSend({ content: content.trim(), files });
-            setContent("");
+            onSubmit(e);
             setFiles([]);
             if (textareaRef.current) {
                 textareaRef.current.style.height = "44px";
@@ -43,10 +53,16 @@ export function ChatInput({
         }
     };
 
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newValue = e.target.value;
+        setContent(newValue);
+        onChange?.(newValue);
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSubmit();
+            handleSubmit(e as any);
         }
     };
 
@@ -59,12 +75,12 @@ export function ChatInput({
     };
 
     return (
-        <div className={`absolute bottom-0 mx-auto inset-x-0 max-w-[50rem] z-50 theme-${theme}`}>
+        <div className={`absolute bottom-0 inset-x-4 mx-auto max-w-[calc(50rem-2rem)] z-50 theme-${theme}`}>
             <div className="relative z-40 flex flex-col items-center w-full">
                 <div className="relative w-full px-2 pb-3 sm:pb-4">
                     <form onSubmit={handleSubmit} className="bottom-0 w-full text-base flex flex-col gap-2 items-center justify-center relative z-10">
                         <div className="flex flex-row gap-2 justify-center w-full relative">
-                            <div className="chat-toolbar duration-150 relative w-full max-w-[50rem] overflow-hidden pb-12 px-3 rounded-3xl shadow">
+                            <div className="bg-white duration-150 relative w-full overflow-hidden pb-12 px-3 rounded-3xl shadow">
                                 {/* File Attachments */}
                                 {files.length > 0 && (
                                     <div className="w-full flex flex-row gap-2 mt-3 flex-wrap whitespace-nowrap">
@@ -87,7 +103,7 @@ export function ChatInput({
                                     <textarea
                                         ref={textareaRef}
                                         value={content}
-                                        onChange={(e) => setContent(e.target.value)}
+                                        onChange={handleChange}
                                         onKeyDown={handleKeyDown}
                                         className="chat-toolbar-input w-full px-3 pt-5 mb-5 focus:outline-none text-primary align-bottom resize-none"
                                         style={{ height: "44px" }}
@@ -100,7 +116,6 @@ export function ChatInput({
                                     <FileAttachmentButton
                                         onFileSelect={handleFileSelect}
                                         disabled={disabled}
-                                        theme={theme}
                                     />
                                     <div className="flex gap-1.5 grow">
                                         <div className="grow flex gap-1.5">
@@ -108,16 +123,14 @@ export function ChatInput({
                                                 mode={mode}
                                                 onModeChange={setMode}
                                                 disabled={disabled}
-                                                theme={theme}
                                             />
                                             <div className="flex items-center ml-auto" />
                                         </div>
                                     </div>
                                     <div className="ml-auto flex flex-row items-end gap-1">
                                         <SendButton
-                                            onClick={handleSubmit}
+                                            onClick={() => handleSubmit(new Event('submit') as any)}
                                             disabled={disabled || (!content.trim() && files.length === 0)}
-                                            theme={theme}
                                         />
                                     </div>
                                 </div>
