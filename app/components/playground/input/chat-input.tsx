@@ -80,7 +80,7 @@ export function ChatInput({
                 <div className="relative w-full px-2 pb-3 sm:pb-4">
                     <form onSubmit={handleSubmit} className="bottom-0 w-full text-base flex flex-col gap-2 items-center justify-center relative z-10">
                         <div className="flex flex-row gap-2 justify-center w-full relative">
-                            <div className="bg-white duration-150 relative w-full overflow-hidden pb-12 px-3 rounded-3xl shadow">
+                            <div className="bg-[var(--msg-secondary)] duration-150 relative w-full overflow-hidden pb-12 px-3 rounded-3xl shadow">
                                 {/* File Attachments */}
                                 {files.length > 0 && (
                                     <div className="w-full flex flex-row gap-2 mt-3 flex-wrap whitespace-nowrap">
@@ -105,7 +105,7 @@ export function ChatInput({
                                         value={content}
                                         onChange={handleChange}
                                         onKeyDown={handleKeyDown}
-                                        className="chat-toolbar-input w-full px-3 pt-5 mb-5 focus:outline-none text-primary align-bottom resize-none"
+                                        className="chat-toolbar-input bg-[var(--msg-secondary)] w-full px-3 pt-5 mb-5 focus:outline-none text-primary align-bottom resize-none"
                                         style={{ height: "44px" }}
                                         disabled={disabled}
                                     />

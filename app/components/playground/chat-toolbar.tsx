@@ -37,7 +37,7 @@ export function ChatToolbar({
                 <Input
                     value={convoName}
                     onChange={(e) => onConvoNameChange(e.target.value)}
-                    className="chat-toolbar-input max-w-[300px] h-8 bg-transparent"
+                    className="chat-toolbar-input bg-[var(--msg-secondary)] max-w-[300px] h-8 bg-transparent"
                     placeholder="Untitled conversation"
                 />
             </div>
