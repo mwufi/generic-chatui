@@ -55,6 +55,7 @@ export interface DiscordMessageProps extends BaseMessageProps {
 }
 
 export interface BumbleMessageProps extends BaseMessageProps {
+    showHeader?: boolean;
     isMatch?: boolean;
     isVerified?: boolean;
     distance?: string;

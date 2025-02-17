@@ -10,6 +10,7 @@ export function BumbleMessage({
     isLoading,
     timestamp = new Date(),
     avatar,
+    showHeader = false,
     username = role === "assistant" ? "AI Assistant" : "You",
     isMatch = false,
     isVerified = false,
@@ -41,7 +42,7 @@ export function BumbleMessage({
                 isUser && "items-end"
             )}>
                 {/* User Info */}
-                {!isUser && (
+                {!isUser && showHeader && (
                     <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium">{username}</span>
                         {isMatch && (
@@ -64,7 +65,7 @@ export function BumbleMessage({
 
                 {/* Message Bubble */}
                 <div className={cn(
-                    "relative rounded-2xl px-4 py-2 text-sm min-h-[2.5rem] min-w-[4rem]",
+                    "relative rounded-2xl px-4 py-2 text-sm min-h-[2.5rem] min-w-[4rem] group",
                     isUser ? (
                         "bg-[#FFC629] text-background rounded-tr-sm"
                     ) : (
@@ -85,7 +86,7 @@ export function BumbleMessage({
 
                 {/* Timestamp */}
                 {!isLoading && (
-                    <div className="text-[10px] text-muted-foreground mt-1">
+                    <div className="text-[10px] text-muted-foreground mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {timestamp.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
                     </div>
                 )}

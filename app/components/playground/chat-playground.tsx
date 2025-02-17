@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useChat, Message } from '@ai-sdk/react'
+import { BumbleMessage } from "../messages/bumble-message";
 
 interface ModelConfig {
     model: string;
@@ -213,7 +214,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                     {/* Messages */}
                     <div className="flex-1 overflow-y-auto min-h-0">
                         {messages.slice(1).map((message, index) => (
-                            <MessageBlock
+                            <BumbleMessage
                                 key={message.id}
                                 role={message.role as "system" | "user" | "assistant"}
                                 content={message.content}
@@ -222,13 +223,6 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                                 onDelete={() => handleDeleteMessage(index + 1)}
                             />
                         ))}
-                        {isLoading && (
-                            <MessageBlock
-                                role="assistant"
-                                content=""
-                                isLoading={true}
-                            />
-                        )}
                     </div>
 
                     {/* Input Bar */}
