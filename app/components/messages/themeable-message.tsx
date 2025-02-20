@@ -128,7 +128,7 @@ export function ThemeableMessage({
                             <>
                                 <div
                                     ref={contentRef}
-                                    className="message-text focus:outline-none"
+                                    className="message-text focus:outline-none whitespace-pre-wrap"
                                     contentEditable
                                     suppressContentEditableWarning
                                     onKeyDown={handleKeyDown}
