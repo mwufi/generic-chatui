@@ -22,6 +22,11 @@ export default function AgentPlaygroundPage() {
                 content: customPrompt,
             }
         ],
+        body: {
+            config: {
+                model: "claude-3-5-sonnet-20241022"
+            }
+        },
         onResponse(response) {
             if (response.status === 401) {
                 toast({
