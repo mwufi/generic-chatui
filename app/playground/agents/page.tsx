@@ -80,7 +80,7 @@ export default function AgentPlaygroundPage() {
                                 id={message.id}
                                 role={message.role as "user" | "assistant"}
                                 content={message.content}
-                                theme="default"
+                                theme="imessage"
                                 isFirstInGroup={true}
                                 isLastInGroup={true}
                             />
@@ -91,7 +91,7 @@ export default function AgentPlaygroundPage() {
                                 role="assistant"
                                 content="..."
                                 isLoading={true}
-                                theme="default"
+                                theme="imessage"
                                 isFirstInGroup={true}
                                 isLastInGroup={true}
                             />
