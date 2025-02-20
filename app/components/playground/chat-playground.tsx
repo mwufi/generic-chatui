@@ -177,7 +177,7 @@ export function ChatPlayground({ saveConvo }: { saveConvo?: (convo: Conversation
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto min-h-0">
+                    <div className="flex-1 overflow-y-auto min-h-0 w-full max-w-[44rem] mx-auto">
                         {messages.slice(1).map((message, index, arr) => {
                             const prevMessage = index > 0 ? arr[index - 1] : null;
                             const nextMessage = index < arr.length - 1 ? arr[index + 1] : null;
