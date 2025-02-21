@@ -1,13 +1,15 @@
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 import "./styles/message-themes.scss";
-import { Inter } from "next/font/google";
-import { Toaster } from "@/components/ui/toaster"
+import { Providers } from './providers';
+import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-  title: "Chat Playground",
-  description: "A playground for testing different chat UI themes",
+export const metadata: Metadata = {
+  title: 'AI Agent Dashboard',
+  description: 'Manage your collection of AI agents',
 };
 
 export default function RootLayout({
@@ -16,10 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {children}
-        <Toaster />
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

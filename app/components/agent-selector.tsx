@@ -60,7 +60,7 @@ export function AgentSelector({
 
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                    {selectedAgent.characteristics.map((char, index) => (
+                    {selectedAgent.personality.traits.map((char, index) => (
                         <Badge key={index} variant="secondary">
                             {char}
                         </Badge>
