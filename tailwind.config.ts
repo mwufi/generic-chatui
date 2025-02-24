@@ -10,6 +10,119 @@ export default {
 	],
 	theme: {
 		extend: {
+			typography: {
+				DEFAULT: {
+					css: {
+						maxWidth: '72ch',
+						p: {
+							marginTop: '0.5rem',
+							marginBottom: '0.5rem',
+							'&:first-child': {
+								marginTop: 0,
+							},
+							'& + :where(ol, ul)': {
+								marginTop: 0,
+							},
+						},
+						h1: {
+							fontWeight: 700,
+							letterSpacing: '-0.04rem',
+							'&:first-child': {
+								marginTop: 0,
+							},
+						},
+						h2: {
+							fontWeight: 600,
+							marginTop: '2rem',
+							marginBottom: '1rem',
+							'&:first-child': {
+								marginTop: 0,
+							},
+						},
+						'h3, h4': {
+							fontWeight: 600,
+							marginTop: '1rem',
+							marginBottom: '0.5rem',
+							'&:first-child': {
+								marginTop: 0,
+							},
+						},
+						h5: {
+							fontWeight: 600,
+							'&:first-child': {
+								marginTop: 0,
+							},
+						},
+						'ol, ul': {
+							'& > li': {
+								'& > :last-child': {
+									marginBottom: 0,
+								},
+								'& > :first-child': {
+									marginTop: 0,
+									marginBottom: 0,
+								},
+							},
+						},
+						blockquote: {
+							borderLeftWidth: '2px',
+							borderColor: 'rgb(155 155 155)',
+							paddingLeft: '1rem',
+							margin: 0,
+							paddingTop: '0.5rem',
+							paddingBottom: '0.5rem',
+							lineHeight: '1.5rem',
+							'& p': {
+								margin: 0,
+								'&:after, &:before': {
+									display: 'none',
+								},
+							},
+						},
+						table: {
+							width: '100%',
+							marginTop: '0.25rem',
+							marginBottom: '0.25rem',
+							borderSpacing: 0,
+							borderCollapse: 'separate',
+						},
+						th: {
+							borderWidth: '1px',
+							borderBottomWidth: '1px',
+							padding: '0.25rem 0.75rem',
+							'&:first-child': {
+								borderTopLeftRadius: '0.375rem',
+							},
+							'&:last-child': {
+								borderTopRightRadius: '0.375rem',
+							},
+						},
+						td: {
+							borderBottomWidth: '1px',
+							borderLeftWidth: '1px',
+							padding: '0.25rem 0.75rem',
+							'&:last-child': {
+								borderRightWidth: '1px',
+							},
+						},
+						'tbody tr:last-child td': {
+							'&:first-child': {
+								borderBottomLeftRadius: '0.375rem',
+							},
+							'&:last-child': {
+								borderBottomRightRadius: '0.375rem',
+							},
+						},
+						a: {
+							fontWeight: 400,
+							textDecoration: 'none',
+						},
+						pre: {
+							marginTop: '0.5rem',
+						},
+					},
+				},
+			},
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',

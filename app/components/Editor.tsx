@@ -11,12 +11,18 @@ interface EditorProps {
 export function Editor({ content, onChange }: EditorProps) {
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                paragraph: {
+                    HTMLAttributes: {
+                        class: 'my-2',
+                    },
+                },
+            }),
         ],
         content,
         editorProps: {
             attributes: {
-                class: 'prose prose-sm sm:prose mx-auto focus:outline-none p-6 max-w-[75ch]',
+                class: 'prose prose-neutral dark:prose-invert focus:outline-none p-6',
             },
         },
         onUpdate: ({ editor }) => {
@@ -25,8 +31,11 @@ export function Editor({ content, onChange }: EditorProps) {
     })
 
     return (
-        <div className="min-h-screen w-full max-w-screen-lg mx-auto">
-            <EditorContent editor={editor} />
+        <div className="w-full mx-auto">
+            <EditorContent
+                editor={editor}
+                className="[&_.ProseMirror]:!max-w-[72ch] [&_.ProseMirror]:mx-auto [&_.ProseMirror]:streaming-animation [&_.ProseMirror_h1]:w-fit [&_.ProseMirror_h2]:w-fit [&_.ProseMirror_h3]:w-fit [&_.ProseMirror_h4]:w-fit [&_.ProseMirror_h5]:w-fit [&_.ProseMirror_h6]:w-fit [&_.ProseMirror_li:not(:has(pre))]:w-fit"
+            />
         </div>
     )
 } 

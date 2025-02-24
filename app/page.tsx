@@ -3,29 +3,23 @@
 import { useState } from 'react';
 import { AppSidebar } from "@/components/app-sidebar"
 import { Editor } from '@/app/components/Editor';
+import { DocumentHeader } from '@/app/components/document-header';
 import { sampleText } from './sample-text';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 // Mock documents - in a real app, this would come from a database
 const mockDocuments = [
-  { id: '1', title: 'Sample Story' },
+  { id: '1', title: 'Hidden Powers Fantasy Tale' },
   { id: '2', title: 'Untitled Document' },
 ];
 
 export default function Home() {
   const [currentDocId, setCurrentDocId] = useState('1');
   const [content, setContent] = useState(sampleText);
+  const [documents, setDocuments] = useState(mockDocuments);
 
   const handleDocumentSelect = (id: string) => {
     setCurrentDocId(id);
@@ -37,27 +31,28 @@ export default function Home() {
     }
   };
 
+  const handleTitleChange = (newTitle: string) => {
+    setDocuments(docs =>
+      docs.map(doc =>
+        doc.id === currentDocId ? { ...doc, title: newTitle } : doc
+      )
+    );
+  };
+
+  const currentDoc = documents.find(doc => doc.id === currentDocId);
+
   return (
     <SidebarProvider>
-      <AppSidebar
-        documents={mockDocuments}
+      {/* <AppSidebar
+        documents={documents}
         currentDocId={currentDocId}
         onDocumentSelect={handleDocumentSelect}
-      />
+      /> */}
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 px-4 sticky top-0 bg-gradient-to-b from-background to-transparent z-10">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbPage>
-                  {mockDocuments.find(doc => doc.id === currentDocId)?.title || 'Document'}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
+        <DocumentHeader
+          title={currentDoc?.title || 'Untitled'}
+          onTitleChange={handleTitleChange}
+        />
         <div className="flex-1 antialiased" style={{ lineHeight: '28px' }}>
           <Editor content={content} onChange={setContent} />
         </div>
