@@ -20,8 +20,8 @@ export function DocumentHeader({ title, onTitleChange }: DocumentHeaderProps) {
     };
 
     return (
-        <div className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 sticky top-0 bg-background z-10">
-            <div className="flex items-center gap-2 w-[232px]">
+        <div className="flex py-2 shrink-0 items-center lg:justify-between gap-2 px-4 sticky top-0 bg-background z-10">
+            <div className="flex items-center gap-2 w-[232px] hidden lg:flex">
             </div>
 
             {isEditing ? (
@@ -36,13 +36,13 @@ export function DocumentHeader({ title, onTitleChange }: DocumentHeaderProps) {
             ) : (
                 <button
                     onClick={() => setIsEditing(true)}
-                    className="text-lg font-semibold hover:underline"
+                    className="text-lg text-gray-500 font-semibold hover:underline"
                 >
                     {title}
                 </button>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-auto lg:ml-0">
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                     <ArrowLeft className="h-4 w-4" />
                 </Button>

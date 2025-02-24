@@ -47,21 +47,23 @@ export default function Home() {
   const currentDoc = documents.find(doc => doc.id === currentDocId);
 
   return (
-    <SidebarProvider>
-      {/* <AppSidebar
+    <div className="h-screen overscroll-none">
+      <SidebarProvider>
+        {/* <AppSidebar
         documents={documents}
         currentDocId={currentDocId}
         onDocumentSelect={handleDocumentSelect}
       /> */}
-      <SidebarInset>
-        <DocumentHeader
-          title={currentDoc?.title || 'Untitled'}
-          onTitleChange={handleTitleChange}
-        />
-        <div className="flex-1 antialiased font-serif" style={{ lineHeight: '28px' }}>
-          <Editor content={content} onChange={handleContentChange} />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <SidebarInset>
+          <DocumentHeader
+            title={currentDoc?.title || 'Untitled'}
+            onTitleChange={handleTitleChange}
+          />
+          <div className="flex-1 h-[calc(100vh-theme(spacing.20))] antialiased md:mx-10 md:my-10" style={{ lineHeight: '28px' }}>
+            <Editor content={content} onChange={handleContentChange} />
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }

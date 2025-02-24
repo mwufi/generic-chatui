@@ -13,7 +13,7 @@ export default {
 			typography: {
 				DEFAULT: {
 					css: {
-						maxWidth: '72ch',
+						maxWidth: '600px',
 						p: {
 							marginTop: '0.5rem',
 							marginBottom: '0.5rem',

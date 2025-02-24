@@ -31,7 +31,7 @@ export function Editor({ content, onChange }: EditorProps) {
     })
 
     return (
-        <div className="w-full mx-auto">
+        <div className="w-full mx-auto overflow-y-auto">
             <EditorContent
                 editor={editor}
                 className="[&_.ProseMirror]:!max-w-[72ch] [&_.ProseMirror]:mx-auto [&_.ProseMirror]:streaming-animation [&_.ProseMirror_h1]:w-fit [&_.ProseMirror_h2]:w-fit [&_.ProseMirror_h3]:w-fit [&_.ProseMirror_h4]:w-fit [&_.ProseMirror_h5]:w-fit [&_.ProseMirror_h6]:w-fit [&_.ProseMirror_li:not(:has(pre))]:w-fit"
