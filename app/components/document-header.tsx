@@ -20,8 +20,8 @@ export function DocumentHeader({ title, onTitleChange }: DocumentHeaderProps) {
     };
 
     return (
-        <div className="flex h-16 shrink-0 items-center gap-2 px-4 sticky top-0 bg-gradient-to-b from-background to-transparent z-10">
-            <div className="flex items-center gap-2">
+        <div className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 sticky top-0 bg-background z-10">
+            <div className="flex items-center gap-2 w-[232px]">
             </div>
 
             {isEditing ? (
@@ -42,7 +42,7 @@ export function DocumentHeader({ title, onTitleChange }: DocumentHeaderProps) {
                 </button>
             )}
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                     <ArrowLeft className="h-4 w-4" />
                 </Button>

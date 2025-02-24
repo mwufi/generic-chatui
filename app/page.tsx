@@ -58,7 +58,7 @@ export default function Home() {
           title={currentDoc?.title || 'Untitled'}
           onTitleChange={handleTitleChange}
         />
-        <div className="flex-1 antialiased" style={{ lineHeight: '28px' }}>
+        <div className="flex-1 antialiased font-serif" style={{ lineHeight: '28px' }}>
           <Editor content={content} onChange={handleContentChange} />
         </div>
       </SidebarInset>
