@@ -31,6 +31,11 @@ export default function Home() {
     }
   };
 
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
+    // console.log('Content changed:', newContent);
+  };
+
   const handleTitleChange = (newTitle: string) => {
     setDocuments(docs =>
       docs.map(doc =>
@@ -54,7 +59,7 @@ export default function Home() {
           onTitleChange={handleTitleChange}
         />
         <div className="flex-1 antialiased" style={{ lineHeight: '28px' }}>
-          <Editor content={content} onChange={setContent} />
+          <Editor content={content} onChange={handleContentChange} />
         </div>
       </SidebarInset>
     </SidebarProvider>
