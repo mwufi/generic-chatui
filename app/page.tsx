@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { AppSidebar } from "@/components/app-sidebar"
 import { Editor } from '@/app/components/Editor';
 import { DocumentHeader } from '@/app/components/document-header';
 import { sampleText } from './sample-text';
 import { EditorMenu } from '@/app/components/floating-menus/editor-menu';
 import { useDocumentStorage } from '@/app/hooks/use-document-storage';
 import { StorageStatus } from '@/app/components/storage-status';
-import { useEffect } from 'react';
 import {
   SidebarInset,
   SidebarProvider,
@@ -65,7 +63,7 @@ export default function Home() {
             />
             <StorageStatus status={status} error={error} />
           </div>
-          <div className="flex-1 h-[calc(100vh-theme(spacing.20))] antialiased md:mx-10 md:my-10" style={{ lineHeight: '28px' }}>
+          <div className="flex-1 h-[calc(100vh-theme(spacing.20))] antialiased md:mx-10 md:my-10 pb-20" style={{ lineHeight: '28px' }}>
             <Editor content={content} onChange={handleContentChange} />
           </div>
           <EditorMenu

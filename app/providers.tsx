@@ -1,6 +1,7 @@
 'use client';
 
 import { ThemeProvider } from 'next-themes';
+import { KBarWrapper } from '@/components/keyboard-shortcuts/kbar-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +10,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       defaultTheme="system"
       enableSystem
     >
-      {children}
+      <KBarWrapper>
+        {children}
+      </KBarWrapper>
     </ThemeProvider>
   );
 } 

@@ -4,6 +4,7 @@ import './globals.css';
 import "./styles/message-themes.scss";
 import { Providers } from './providers';
 import { Toaster } from "@/components/ui/toaster";
+import { KeyboardShortcutsProvider } from '@/components/keyboard-shortcuts/keyboard-shortcuts-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Providers>
-          {children}
+          <KeyboardShortcutsProvider>
+            {children}
+          </KeyboardShortcutsProvider>
           <Toaster />
         </Providers>
       </body>
