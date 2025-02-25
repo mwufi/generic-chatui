@@ -2,7 +2,7 @@
 
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface EditorProps {
     content: string;
@@ -10,6 +10,7 @@ interface EditorProps {
 }
 
 export function Editor({ content, onChange }: EditorProps) {
+    const [loaded, setLoaded] = useState(false);
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -32,9 +33,10 @@ export function Editor({ content, onChange }: EditorProps) {
     })
 
     useEffect(() => {
-        if (content) {
+        if (content && !loaded) {
             console.log('updating editor content', content);
             editor?.commands.setContent(content);
+            setLoaded(true);
         }
     }, [content]);
 
