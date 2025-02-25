@@ -6,6 +6,9 @@ import { Editor } from '@/app/components/Editor';
 import { DocumentHeader } from '@/app/components/document-header';
 import { sampleText } from './sample-text';
 import { EditorMenu } from '@/app/components/floating-menus/editor-menu';
+import { useDocumentStorage } from '@/app/hooks/use-document-storage';
+import { StorageStatus } from '@/app/components/storage-status';
+import { useEffect } from 'react';
 import {
   SidebarInset,
   SidebarProvider,
@@ -19,22 +22,21 @@ const mockDocuments = [
 
 export default function Home() {
   const [currentDocId, setCurrentDocId] = useState('1');
-  const [content, setContent] = useState(sampleText);
   const [documents, setDocuments] = useState(mockDocuments);
+
+  const {
+    content,
+    setContent: handleContentChange,
+    status,
+    error
+  } = useDocumentStorage(
+    currentDocId,
+    // Only provide sample text as initial content for doc 1
+    currentDocId === '1' ? sampleText : ''
+  );
 
   const handleDocumentSelect = (id: string) => {
     setCurrentDocId(id);
-    // In a real app, we would fetch the document content here
-    if (id === '1') {
-      setContent(sampleText);
-    } else {
-      setContent('');
-    }
-  };
-
-  const handleContentChange = (newContent: string) => {
-    setContent(newContent);
-    // console.log('Content changed:', newContent);
   };
 
   const handleTitleChange = (newTitle: string) => {
@@ -56,10 +58,13 @@ export default function Home() {
         onDocumentSelect={handleDocumentSelect}
       /> */}
         <SidebarInset>
-          <DocumentHeader
-            title={currentDoc?.title || 'Untitled'}
-            onTitleChange={handleTitleChange}
-          />
+          <div className="flex items-center justify-between">
+            <DocumentHeader
+              title={currentDoc?.title || 'Untitled'}
+              onTitleChange={handleTitleChange}
+            />
+            <StorageStatus status={status} error={error} />
+          </div>
           <div className="flex-1 h-[calc(100vh-theme(spacing.20))] antialiased md:mx-10 md:my-10" style={{ lineHeight: '28px' }}>
             <Editor content={content} onChange={handleContentChange} />
           </div>

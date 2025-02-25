@@ -2,6 +2,7 @@
 
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { useEffect } from 'react';
 
 interface EditorProps {
     content: string;
@@ -29,6 +30,13 @@ export function Editor({ content, onChange }: EditorProps) {
             onChange(editor.getHTML())
         },
     })
+
+    useEffect(() => {
+        if (content) {
+            console.log('updating editor content', content);
+            editor?.commands.setContent(content);
+        }
+    }, [content]);
 
     return (
         <div className="w-full mx-auto overflow-y-auto">
