@@ -3,8 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useEffect, useState, useRef } from 'react';
-import { MessageCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Cat } from 'lucide-react';
 
 interface EditorProps {
     content: string;
@@ -50,7 +49,7 @@ export function Editor({ content, onChange }: EditorProps) {
                         // Calculate position relative to the editor container
                         setButtonPosition({
                             top: rect.top - editorRect.top,
-                            left: rect.left - editorRect.left + rect.width - 10
+                            left: rect.left - editorRect.left + rect.width + 10
                         });
                         setHoveredParagraph(paragraph);
                     }
@@ -112,7 +111,7 @@ export function Editor({ content, onChange }: EditorProps) {
             {hoveredParagraph && (
                 <div
                     ref={buttonRef}
-                    className="absolute z-50"
+                    className="absolute z-50 cursor-pointer"
                     style={{
                         top: buttonPosition.top + 'px',
                         left: buttonPosition.left + 'px',
@@ -122,15 +121,11 @@ export function Editor({ content, onChange }: EditorProps) {
                             clearTimeout(hideTimeoutRef.current);
                         }
                     }}
+                    onClick={handlePlusClick}
                 >
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-12 w-12 rounded-full hover:bg-transparent p-0 transition-all duration-200 hover:scale-125 origin-center"
-                        onClick={handlePlusClick}
-                    >
-                        <MessageCircle className="opacity-40 hover:opacity-100 transition-all duration-200" />
-                    </Button>
+                    <Cat
+                        className="h-8 w-8 opacity-40 hover:opacity-60 transition-all duration-200 hover:scale-125 transform-gpu"
+                    />
                 </div>
             )}
         </div>
