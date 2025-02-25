@@ -16,10 +16,10 @@ function RenderResults() {
 
                 return (
                     <div
-                        className={`px-4 py-2 flex items-center justify-between ${active ? 'bg-accent' : 'bg-transparent'
+                        className={`flex items-center justify-between ${active ? 'bg-accent' : 'bg-transparent'
                             }`}
                     >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 px-4 py-2 flex-1">
                             {Icon && <Icon className="w-4 h-4" />}
                             <div>
                                 <div>{item.name}</div>
@@ -29,7 +29,7 @@ function RenderResults() {
                             </div>
                         </div>
                         {item.shortcut?.length ? (
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 px-4">
                                 {item.shortcut.map((sc: string) => (
                                     <kbd
                                         key={sc}
@@ -52,10 +52,10 @@ export function CommandPalette() {
         <KBarPortal>
             <KBarPositioner className="bg-background/80 backdrop-blur-sm z-50">
                 <KBarAnimator className="w-full max-w-[600px] rounded-lg border bg-background shadow-lg overflow-hidden">
-                    <div className="p-4 border-b">
-                        <KBarSearch className="w-full bg-transparent outline-none placeholder:text-muted-foreground" />
+                    <div className="border-b">
+                        <KBarSearch className="w-full bg-transparent outline-none placeholder:text-muted-foreground p-4" />
                     </div>
-                    <div className="px-2 py-4">
+                    <div className="py-4">
                         <RenderResults />
                     </div>
                 </KBarAnimator>
