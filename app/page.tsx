@@ -11,6 +11,7 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { WidthSelector } from '@/app/components/width-selector';
 
 // Mock documents - in a real app, this would come from a database
 const mockDocuments = [
@@ -21,6 +22,13 @@ const mockDocuments = [
 export default function Home() {
   const [currentDocId, setCurrentDocId] = useState('1');
   const [documents, setDocuments] = useState(mockDocuments);
+  const [editorWidth, setEditorWidth] = useState<'normal' | 'wide' | 'full'>('normal');
+
+  const widthStyles = {
+    normal: { '--typingarea-max-width': '600px' },
+    wide: { '--typingarea-max-width': '800px' },
+    full: { '--typingarea-max-width': '1200px' }
+  } as const;
 
   const {
     content,
@@ -61,9 +69,15 @@ export default function Home() {
               title={currentDoc?.title || 'Untitled'}
               onTitleChange={handleTitleChange}
             />
-            <StorageStatus status={status} error={error} />
+            <div className="flex items-center gap-4">
+              <WidthSelector currentWidth={editorWidth} onChange={setEditorWidth} />
+              <StorageStatus status={status} error={error} />
+            </div>
           </div>
-          <div className="flex-1 h-[calc(100vh-theme(spacing.20))] antialiased md:mx-10 md:my-10 pb-20" style={{ lineHeight: '28px' }}>
+          <div
+            className="flex-1 h-[calc(100vh-theme(spacing.20))] antialiased md:mx-10 md:my-10 pb-20"
+            style={{ lineHeight: '28px', ...widthStyles[editorWidth] }}
+          >
             <Editor content={content} onChange={handleContentChange} />
           </div>
           <EditorMenu

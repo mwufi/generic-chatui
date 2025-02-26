@@ -13,7 +13,7 @@ export default {
 			typography: {
 				DEFAULT: {
 					css: {
-						maxWidth: '600px',
+						maxWidth: 'var(--typingarea-max-width)',
 						p: {
 							marginTop: '0.5rem',
 							marginBottom: '0.5rem',
